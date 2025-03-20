@@ -15,10 +15,13 @@ import rateLimit from "express-rate-limit";
 import UserRoute from "./router/userRouter";
 import ProductRoute from "./router/productRouter";
 import OrderRoute from "./router/orderRouter";
-// import session from "express-session";
+import cookieSession from "cookie-session";
+import passport from "passport";
+import oAuth from "./router/OAuth";
 
 export const mainApp = (app: Application) => {
   app.use(cors());
+
   app.use(helmet());
   // app.use(morgan("dev"));
   app.use(urlencoded({ extended: true }));
@@ -36,19 +39,35 @@ export const mainApp = (app: Application) => {
     message: "Too many requests from this IP, please try again after an hour",
   });
 
-  // app.use(
-  //   session({
-  //     secret: process.env.Session_Secret,
-  //     resave: false,
-  //     saveUninitialized: true,
-  //     cookie: { secure: false }, // Set to true in production with HTTPS
-  //   })
-  // )
+  app.use(
+    cookieSession({
+      name: `${process.env.SESSION_NAME}`,
+      keys: [`${process.env.SESSION_KEY}`],
+      maxAge: 2 * 60 * 60 * 100,
+    }),
+  )
+
+  .use(function (req: any, res: Response, next: NextFunction) {
+    if (req.session && !req.session.regenerate) {
+      req.session.regenerate = (cb: any) => {
+        cb();
+      };
+    }
+    if (req.session && !req.session.save) {
+      req.session.save = (cb: any) => {
+        cb();
+      };
+    }
+    next();
+  })
+  .use(passport.initialize())
+  .use(passport.session())
 
   app.use(limiter);
 
   app.use("/api", UserRoute);
   app.use("/api/product", ProductRoute);
+  app.use("/", oAuth)
   app.use("/api/order", OrderRoute);
 
   app.get("/", (req: Request, res: Response) => {

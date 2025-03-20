@@ -4,7 +4,7 @@ import SignUp from "../pages/Auth/SignUp";
 import NotFound from "../pages/NotFound";
 import SignIn from "../pages/Auth/SignIn";
 
-export const mainRoute = createBrowserRouter([
+const mainRoute = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
@@ -24,3 +24,5 @@ export const mainRoute = createBrowserRouter([
     element: <NotFound />,
   },
 ]);
+
+export default mainRoute;

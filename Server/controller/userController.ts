@@ -5,14 +5,8 @@ import { AppError, HttpCode } from "../error/errorDefine";
 import { User } from "../model/userModel";
 import bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
-import { 
-  addMinutes, 
-  isAfter
-} from "date-fns";
-import { 
-  SendOtpCode, 
-  ForgetPasswordEmail 
-} from "../Utils/nodemailer";
+import { addMinutes, isAfter } from "date-fns";
+import { SendOtpCode, ForgetPasswordEmail } from "../Utils/nodemailer";
 import cloudinary from "../Utils/Cloudinary";
 import streamifier from "streamifier";
 import {
@@ -36,9 +30,16 @@ export const CreateUser = asyncHandler(
     next: NextFunction
   ): Promise<any> => {
     try {
-      const { name, email, password, confirmPassword } = req.body;
+      const {
+        Firstname,
+        Lastname,
+        Username,
+        email,
+        password,
+        confirmPassword,
+      } = req.body;
 
-      if (!name || !email || !password) {
+      if (!Firstname || !Lastname || !Username || !email || !password) {
         return next(
           new AppError({
             message: "All required fields are required",
@@ -65,7 +66,9 @@ export const CreateUser = asyncHandler(
         const otpExpiryTimestamp = addMinutes(new Date(), 5);
 
         const create = await User.create({
-          name,
+          Firstname,
+          Lastname,
+          Username,
           email,
           password: Hash,
           OtpCode: OTP,
@@ -479,7 +482,7 @@ export const getAllUser = asyncHandler(
 export const getOneUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-      const  userId  = req.params?.userId;
+      const userId = req.params?.userId;
 
       if (!userId) {
         return next(
@@ -741,7 +744,7 @@ export const updateToadmn = asyncHandler(
         );
       }
 
-      if(userToUpdate.role === "admin"){
+      if (userToUpdate.role === "admin") {
         return next(
           new AppError({
             message: "User is already an admin",
@@ -758,7 +761,7 @@ export const updateToadmn = asyncHandler(
         user: userToUpdate,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return next(
         new AppError({
           message: "An error occurred while updating the user to admin",
@@ -769,43 +772,51 @@ export const updateToadmn = asyncHandler(
   }
 );
 
-export const addToCart =asyncHandler(
+export const addToCart = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, productId, quantity } = req.body;
 
       const user = await User.findById(userId);
       if (!user) {
-          return res.status(HttpCode.NOT_FOUND).json({ error: "User not found" });
+        return res.status(HttpCode.NOT_FOUND).json({ error: "User not found" });
       }
 
       await user.addToCart(productId, quantity || 1);
-      return res.json({ message: "Item added to cart successfully!", cart: user.cart });
-  } catch (error) {
+      return res.json({
+        message: "Item added to cart successfully!",
+        cart: user.cart,
+      });
+    } catch (error) {
       console.error(error);
-      return res.status(HttpCode.INTERNAL_SERVER_ERROR).json({ error: "Server error" });
+      return res
+        .status(HttpCode.INTERNAL_SERVER_ERROR)
+        .json({ error: "Server error" });
+    }
   }
-  }
-)
+);
 
-export const removeFromCart =asyncHandler(
+export const removeFromCart = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, productId } = req.body;
 
       const user = await User.findById(userId);
       if (!user) {
-          return res.status(404).json({ error: "User not found" });
+        return res.status(404).json({ error: "User not found" });
       }
 
       await user.RemoveCart(productId);
-      return res.json({ message: "Item removed from cart successfully!", cart: user.cart });
-  } catch (error) {
+      return res.json({
+        message: "Item removed from cart successfully!",
+        cart: user.cart,
+      });
+    } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Server error" });
+    }
   }
-  }
-)
+);
 
 export const EmptyCart = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -814,16 +825,17 @@ export const EmptyCart = asyncHandler(
 
       const user = await User.findById(userId);
       if (!user) {
-          return res.status(404).json({ error: "User not found" });
+        return res.status(404).json({ error: "User not found" });
       }
 
       await user.clearCart();
-      return res.json({ message: "Cart emptied successfully!", cart: user.cart });
-  } catch (error) {
+      return res.json({
+        message: "Cart emptied successfully!",
+        cart: user.cart,
+      });
+    } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Server error" });
+    }
   }
-  }
-)
-
-  
+);

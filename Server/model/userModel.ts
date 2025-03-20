@@ -11,9 +11,17 @@ interface AllUsers extends Iuser, Document {
 
 const UserSchema = new Schema<AllUsers>(
   {
-    name: {
+    Firstname: {
       type: String,
-      required: [true, "Your Name is required"],
+      required: [true, "Your Firstname is required"],
+    },
+    Lastname: {
+      type: String,
+      required: [true, "Your Lastname is required"],
+    },
+    Username: {
+      type: String,
+      required: [true, "Your Username is required"],
     },
     email: {
       type: String,

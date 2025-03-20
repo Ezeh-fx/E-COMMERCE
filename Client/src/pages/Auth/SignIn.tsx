@@ -1,4 +1,3 @@
-import React from "react";
 import img from "../../assets/signUp.jpg";
 import { CgProfile } from "react-icons/cg";
 import { useState } from "react";
@@ -14,9 +13,9 @@ const SignIn = () => {
     setShow((prevShow) => !prevShow);
   };
   return (
-    <div className="w-full h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29]">
+    <div className="w-full h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] mobile:items-center mobile:justify-center mobile:h-auto">
       {/* Image */}
-      <div className="w-1/2 bg-white md:flex">
+      <div className="w-1/2 bg-white mobile:hidden tablet:hidden ">
         <img
           src={img}
           alt="signup"
@@ -25,12 +24,12 @@ const SignIn = () => {
       </div>
 
       {/* Form */}
-      <div className="flex flex-col items-center justify-center w-1/2 h-full">
+      <div className="flex flex-col items-center justify-center w-1/2 h-full mobile:w-full mobile:h-screen tablet:w-full">
         {/* Icon */}
         <CgProfile color="white" size={70} />
-        <form className="flex flex-col items-start justify-center w-auto h-auto gap-4">
+        <form className="flex flex-col items-start justify-center w-auto h-auto gap-4 mobile:w-full mobile:h-auto mobile:px-4 mobile:gap-0">
           {/* Input Email */}
-          <div className="flex flex-col w-[550px]">
+          <div className="flex flex-col w-[550px] mobile:w-full">
             <label className="font-bold text-white">Email</label>
             <input
               type="email"
@@ -69,7 +68,7 @@ const SignIn = () => {
           </div>
 
             {/* Button */}
-            <div className="flex  items-center justify-between w-[100%]">
+            <div className="flex  items-center justify-between w-[100%] mobile:flex-col-reverse mobile:gap-4 mobile:w-full mobile:mt-5">
             {/* Login */}
             <p className="text-white">
               Don't have an account?{" "}

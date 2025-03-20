@@ -33,7 +33,7 @@ export const SendOtpCode = async (user: any) => {
     const buildFile = path.join(__dirname, "../view/AccountVerification.ejs");
 
     const data = await ejs.renderFile(buildFile, {
-      name: user.name,
+      Firstname: user.Firstname,
       email: user.email,
       OtpCode: user.OtpCode,
     });
