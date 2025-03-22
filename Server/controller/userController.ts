@@ -31,15 +31,16 @@ export const CreateUser = asyncHandler(
   ): Promise<any> => {
     try {
       const {
-        Firstname,
-        Lastname,
-        Username,
+        firstname,
+        lastname,
+        username,
         email,
         password,
-        confirmPassword,
       } = req.body;
 
-      if (!Firstname || !Lastname || !Username || !email || !password) {
+      console.log(req.body);
+
+      if (!firstname || !lastname || !username || !email || !password) {
         return next(
           new AppError({
             message: "All required fields are required",
@@ -66,9 +67,9 @@ export const CreateUser = asyncHandler(
         const otpExpiryTimestamp = addMinutes(new Date(), 5);
 
         const create = await User.create({
-          Firstname,
-          Lastname,
-          Username,
+          firstname,
+          lastname,
+          username,
           email,
           password: Hash,
           OtpCode: OTP,
@@ -93,7 +94,7 @@ export const CreateUser = asyncHandler(
           message: "registration successful",
           data: {
             id: create.id,
-            name: create.name,
+            firstname: create.firstname,
           },
         });
       }

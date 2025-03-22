@@ -1,9 +1,9 @@
 import { Document, Schema } from "mongoose";
 
 export interface Iuser extends Document {
-  Firstname : string;
-  Lastname : string;
-  Username : string;
+  firstname : string;
+  lastname : string;
+  username : string;
   name: string;
   email: string;
   password: string;

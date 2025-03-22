@@ -9,6 +9,7 @@ export const registerValidation :  RequestHandler= (
     next: NextFunction
 ) => {
     validate(userSchemaValidator.register , req.body , next)
+    
 }
 
 export const loginValidation : RequestHandler = (

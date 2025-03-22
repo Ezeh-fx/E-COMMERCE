@@ -1,28 +1,21 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios";
 
-
-
-interface RegisterData {
-    Firstname : string;
-    Lastname: string;
-    Username: string;
-    email: string;
-    password: string;
+interface RegisterCredentials {
+  firstname: string;
+  lastname: string;
+  username: string;
+  email: string;
+  password: string;
 }
 
-interface RegisterResponse {
-    data: any;
-}
-
-export const AuthApiRegister = async (data: RegisterData): Promise<RegisterResponse | Error> => {
-    try {
-        const response: RegisterResponse = await axios.post("http://localhost:2343/api/register", data).then((res) => {
-            return res.data;
-        }).catch((err) => {
-            return err;
-        });
-        return response;
-    } catch (error) {
-        return error as Error;
-    }
-}
+export const UserRegister = async (credentials: RegisterCredentials) => {
+  console.log("Sending Data to API:", credentials); // ✅ Check if field names are correct
+  try {
+    const response = await axios.post("http://localhost:2343/api/register", credentials);
+    return response.data;
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError;
+    console.error("Registration Error:", axiosError.response?.data || axiosError.message);
+    return axiosError.response?.data || { message: "An error occurred" };
+  }
+};

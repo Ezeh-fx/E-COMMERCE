@@ -11,15 +11,15 @@ interface AllUsers extends Iuser, Document {
 
 const UserSchema = new Schema<AllUsers>(
   {
-    Firstname: {
+    firstname: {
       type: String,
       required: [true, "Your Firstname is required"],
     },
-    Lastname: {
+    lastname: {
       type: String,
       required: [true, "Your Lastname is required"],
     },
-    Username: {
+    username: {
       type: String,
       required: [true, "Your Username is required"],
     },
