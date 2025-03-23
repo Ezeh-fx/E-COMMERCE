@@ -29,7 +29,7 @@ const upload = multer({
 const UserRoute = Router();
 
 UserRoute.route("/register").post(registerValidation, CreateUser);
-UserRoute.route("/verify").get(VerifyAccount);
+UserRoute.route("/verify").post(VerifyAccount);
 UserRoute.route("/Login").post(loginValidation, LoginUser);
 UserRoute.route("/changeProfileImage/:userId").patch(
   upload.single("profileImage"),

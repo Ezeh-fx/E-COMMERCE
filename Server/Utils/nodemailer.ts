@@ -28,6 +28,7 @@ export const SendOtpCode = async (user: any) => {
         refreshToken: refreshToken,
         accessToken: accessToken?.toString(), // ✅ Ensure correct type
       },
+      connectionTimeout: 10000,
     });
 
     const buildFile = path.join(__dirname, "../view/AccountVerification.ejs");

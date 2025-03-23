@@ -11,9 +11,14 @@ import Dotspinner from "../../components/ReUse/Dotspinner";
 const SignUp = () => {
   const [show, setShow] = useState(true);
   const navigate = useNavigate();
-  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [passwordStrength, setPasswordStrength] = useState<{
+    text: string;
+    color: string;
+    width: string;
+  }>({ text: "", color: "text-gray-400", width: "w-0" });
   const [loading, setLoading] = useState(false);
   const [showStrengthBar, setShowStrengthBar] = useState(false); // Hide initially
+  const [email, setEmail] = useState("");
 
   // Yup Schema for validation
   const schema = yup.object().shape({
@@ -24,6 +29,9 @@ const SignUp = () => {
     password: yup
       .string()
       .min(6, "Password must be at least 6 characters")
+      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .matches(/[0-9]/, "Password must contain at least one number")
+      .matches(/[^A-Za-z0-9]/, "Password must contain at least one special character")
       .required("Password is required"),
     confirmPassword: yup
       .string()
@@ -41,26 +49,25 @@ const SignUp = () => {
   });
 
   // Function to determine password strength
+  // Function to determine password strength
   const getPasswordStrength = (password: string) => {
-    let strength = 0;
-    if (password.length >= 6) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    let strength = { text: "Weak", color: "text-red-500", width: "w-1/3 bg-red-500" };
+
+    if (password.length >= 6 && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
+      strength = { text: "Medium", color: "text-yellow-500", width: "w-2/3 bg-yellow-500" };
+    }
+    if (password.length >= 8 && /[^A-Za-z0-9]/.test(password)) {
+      strength = { text: "Strong", color: "text-green-500", width: "w-full bg-green-500" };
+    }
+
     return strength;
   };
 
-  // Update password strength
+  // Update password strength on input change
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
     setPasswordStrength(getPasswordStrength(newPassword));
-
-    if (newPassword.length > 0) {
-      setShowStrengthBar(true); // Show strength bar when user types
-      setPasswordStrength(getPasswordStrength(newPassword));
-    } else {
-      setShowStrengthBar(false); // Hide when empty
-    }
+    setShowStrengthBar(newPassword.length > 0);
   };
 
   // Submit Handler
@@ -71,8 +78,11 @@ const SignUp = () => {
         console.log(response);
         if (response.data) {
           setLoading(false);
-          alert("Registration successful. You can now login.");
-          navigate("/Login");
+          alert("Registration successful. You can now verify your account.");
+          // ✅ Save email to localStorage
+          localStorage.setItem("email", email);
+          localStorage.setItem("timer", "300"); // 5 minutes timer
+          navigate("/verify"); // Pass email to Verify Page
         }
       })
       .catch((error) => {
@@ -162,6 +172,8 @@ const SignUp = () => {
               type="email"
               placeholder="Email"
               {...register("email")}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 my-2 bg-white font-semibold rounded-md outline-none h-[60px]"
             />
             {errors.email && (
@@ -200,44 +212,25 @@ const SignUp = () => {
                 )}
               </div>
             </div>
-           {/* Animated Password Strength Bar (Only appears when user types) */}
-{showStrengthBar && (
-  <div className="w-full h-2 mt-2 overflow-hidden bg-gray-300 rounded-full">
-    <div
-      className={`h-full transition-all duration-500 ${
-        passwordStrength === 1
-          ? "w-1/3 bg-red-500"
-          : passwordStrength === 2
-          ? "w-2/3 bg-yellow-500"
-          : passwordStrength === 3
-          ? "w-full bg-green-500"
-          : "w-0"
-      }`}
-    ></div>
-  </div>
-)}
+            {/* Animated Password Strength Bar (Only appears when user types) */}
+            {/* Password Strength Bar (Only appears when typing) */}
+            {showStrengthBar && (
+              <div className="w-full h-2 mt-2 overflow-hidden bg-gray-300 rounded-full">
+                <div
+                  className={`h-full transition-all duration-500 ${passwordStrength.width}`}
+                ></div>
+              </div>
+            )}
 
-{/* Strength Text (Only shows when typing) */}
-{showStrengthBar && (
-  <p
-    className={`mt-1 text-sm font-semibold ${
-      passwordStrength === 1
-        ? "text-red-500"
-        : passwordStrength === 2
-        ? "text-yellow-500"
-        : passwordStrength === 3
-        ? "text-green-500"
-        : "text-gray-400"
-    }`}
-  >
-    {passwordStrength === 1
-      ? "Weak"
-      : passwordStrength === 2
-      ? "Medium"
-      : passwordStrength === 3
-      ? "Strong" : ""}
-  </p>
-)}
+            {/* Strength Text */}
+            {showStrengthBar && (
+              <p
+                className={`mt-1 text-sm font-semibold ${passwordStrength.color}`}
+              >
+                {passwordStrength.text}
+              </p>
+            )}
+
             {errors.password && (
               <div className="text-xs text-red-600">
                 {errors.password?.message}
