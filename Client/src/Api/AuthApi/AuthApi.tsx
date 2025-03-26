@@ -9,41 +9,83 @@ interface RegisterCredentials {
 }
 interface VerifyCredentials {
   email: string;
-  OtpCode : number;
+  OtpCode: number;
+}
+
+interface LoginCredentials {
+  email: string;
+  password: string;
 }
 
 export const UserRegister = async (credentials: RegisterCredentials) => {
   console.log("Sending Data to API:", credentials); // ✅ Check if field names are correct
   try {
-    const response = await axios.post("http://localhost:2343/api/register", credentials);
+    const response = await axios.post(
+      "http://localhost:2343/api/register",
+      credentials
+    );
     return response.data;
   } catch (error: unknown) {
     const axiosError = error as AxiosError;
-    console.error("Registration Error:", axiosError.response?.data || axiosError.message);
+    console.error(
+      "Registration Error:",
+      axiosError.response?.data || axiosError.message
+    );
     return axiosError.response?.data || { message: "An error occurred" };
   }
 };
 
-export const UserVerifyRegistration = async (credentials: VerifyCredentials) => {
+export const UserVerifyRegistration = async (
+  credentials: VerifyCredentials
+) => {
   try {
-    const response = await axios.post("http://localhost:2343/api/verify", credentials);
+    const response = await axios.post(
+      "http://localhost:2343/api/verify",
+      credentials
+    );
 
     return response.data;
   } catch (error: unknown) {
-     const axiosError = error as AxiosError;
-    console.error("Registration Error:", axiosError.response?.data || axiosError.message);
+    const axiosError = error as AxiosError;
+    console.error(
+      "Registration Error:",
+      axiosError.response?.data || axiosError.message
+    );
     return axiosError.response?.data || { message: "An error occurred" };
   }
-}
+};
 
-export const UserOtpResend = async (email : string) => {
+export const UserOtpResend = async (email: string) => {
   try {
-    const response = await axios.post("http://localhost:2343/api/resendotp", email);
+    const response = await axios.post(
+      "http://localhost:2343/api/resendotp",
+      email
+    );
 
     return response.data;
   } catch (error: unknown) {
-     const axiosError = error as AxiosError;
-    console.error("Registration Error:", axiosError.response?.data || axiosError.message);
+    const axiosError = error as AxiosError;
+    console.error(
+      "Registration Error:",
+      axiosError.response?.data || axiosError.message
+    );
     return axiosError.response?.data || { message: "An error occurred" };
   }
-}
+};
+
+export const UserLogin = async (credentials: LoginCredentials) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:2343/api/Login",
+      credentials
+    );
+    return response.data;
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError;
+    console.error(
+      "Login Error:",
+      axiosError.response?.data || axiosError.message
+    );
+    return axiosError.response?.data || { message: "An error occurred" };
+  }
+};

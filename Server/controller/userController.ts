@@ -222,10 +222,11 @@ export const LoginUser = asyncHandler(
         );
       }
 
-      const Token = generateToken({ _id: FindUser._id, email: FindUser.email });
+      const Token = generateToken({ _id: FindUser._id, email: FindUser.email, role: FindUser.role,});
       const Refresh = generateRefreshToken({
         _id: FindUser._id,
         email: FindUser.email,
+        role: FindUser.role,
       });
 
       return res.status(HttpCode.OK).json({
@@ -589,6 +590,7 @@ export const refreshToken = asyncHandler(
         const newRefreshToken = generateRefreshToken({
           _id: user._id,
           email: user.email,
+          role: user.role,
         });
 
         // Respond with the new access token and optionally the new refresh token

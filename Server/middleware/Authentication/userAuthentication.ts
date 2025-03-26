@@ -8,6 +8,7 @@ import { Iuser } from "../../Interface/userInterface";
 interface Payload extends JwtPayload {
   _id: unknown ; 
   email: string;
+  role: string, // ✅ Ensure the role is included
 }
 
 import dotenv from "dotenv";

@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { UserRegister } from "../../Api/AuthApi/AuthApi";
 import Dotspinner from "../../components/ReUse/Dotspinner";
+import Swal from 'sweetalert2'
 
 const SignUp = () => {
   const [show, setShow] = useState(true);
@@ -83,11 +84,28 @@ const SignUp = () => {
           localStorage.setItem("email", email);
           localStorage.setItem("timer", "300"); // 5 minutes timer
           navigate("/verify"); // Pass email to Verify Page
+        }else {
+          setLoading(false);
+          Swal.fire({
+            title: "Email Already Exists Login",
+            width: 600,
+            padding: "3em",
+            color: "#716add",
+            background: "#fff url(/images/trees.png)",
+            backdrop: `
+              rgba(0,0,123,0.4)
+              url("/images/nyan-cat.gif")
+              left top
+              no-repeat
+            `
+          }).then(()=>{
+            navigate("/Login")
+          })
         }
       })
       .catch((error) => {
         setLoading(false);
-        console.log(error.message);
+       console.log(error.data)
       });
   };
 
@@ -291,7 +309,7 @@ const SignUp = () => {
               }relative px-6 py-2 text-white text-lg font-semibold bg-[#24243e] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] transition duration-300 w-[200px] h-[60px] justify-center flex items-center`}
               type="submit"
             >
-              {loading ? Dotspinner() : "Sign Up"}
+              {loading ? <div className="flex">{Dotspinner()} Loading ...</div> : "Sign Up"}
             </button>
           </div>
         </form>

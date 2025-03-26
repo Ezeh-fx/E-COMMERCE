@@ -116,14 +116,14 @@ const Verify = () => {
         {/* Verify Button */}
         <button
           type="submit"
-          className="p-2 mt-4 text-white bg-blue-500 rounded-md focus:outline-none w-[100%] font-bold text-[30px]"
+          className="p-2 mt-4 text-white bg-blue-500 rounded-md focus:outline-none w-[100%] font-bold text-[30px] flex items-center justify-center"
           disabled={otp.length !== 4 || loading}
         >
-          {loading ? <div>{Dotspinner()} Verifying...</div> : "Verify OTP"}
+          {loading ? <div className="flex gap-4">{Dotspinner()} Verifying...</div> : "Verify OTP"}
         </button>
 
         {/* Resend OTP Button (Visible only when timer reaches 0) */}
-        {timer === 0 && (
+        {timer === 30 && (
           <p className="text-white">
             Did not receive code?{" "}
             <span
