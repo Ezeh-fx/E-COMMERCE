@@ -43,19 +43,12 @@ const SignIn = () => {
       if (response.data) {
         setLoading(false);
         alert("Login successful. Welcome toyour easy online Shopping.")
-        if (response.data?.token) {
-          dispatch(setUser({ token: response.data.token }));
-          console.log(jwtDecode(response.data.token));
-          // Decode token manually (optional)
-          const decoded: any = jwtDecode(response.data.token);
-          console.log("User Role:", decoded.role);
-  
-          // Redirect based on role
-          if (decoded.role === "admin") {
-            navigate("/admin-dashboard");
-          } else {
-            navigate("/home");
-          }
+        dispatch(setUser(response))
+        const token : any = jwtDecode(response.data.token)
+        if (token.role === "admin"){
+            navigate("/admin")
+        }else{
+            navigate("/")
         }
       } else {
         setLoading(false);
@@ -72,7 +65,7 @@ const SignIn = () => {
                     no-repeat
                   `,
         }).then(() => {
-          navigate("/");
+          navigate("/register");
         });
       }
     })

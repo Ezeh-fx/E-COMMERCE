@@ -1,30 +1,57 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-interface UserState {
-  token: string | null;
+const initialState = {
+  user : null
 }
 
-const initialState: { loggin: UserState } = {
-  loggin: { token: null },
-};
 
 const userReducer = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    setUser: (state, action: PayloadAction<{ token: string }>) => {
-      return {
-        ...state,
-        loggin: { token: action.payload.token },
-      };
+  reducers : {
+    setUser : (state , {payload}) => {
+       state.user = payload.user
     },
-    logOut: () => {
-      return {
-        loggin: { token: null },
-      };
-    },
-  },
-});
+    logOut : (state) => {
+      state.user = null
+    }
+  }
+})
 
 export const { setUser, logOut } = userReducer.actions;
 export default userReducer.reducer;
+
+
+
+
+
+// import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+// interface UserState {
+//   token: string | null;
+// }
+
+// const initialState: { loggin: UserState } = {
+//   loggin: { token: null },
+// };
+
+// const userReducer = createSlice({
+//   name: "user",
+//   initialState,
+//   reducers: {
+//     setUser: (state, action: PayloadAction<{ token: string }>) => {
+//       return {
+//         ...state,
+//         loggin: { token: action.payload.token },
+//       };
+//     },
+//     logOut: () => {
+//       return {
+//         loggin: { token: null },
+//       };
+//     },
+//   },
+// });
+
+// export const { setUser, logOut } = userReducer.actions;
+// export default userReducer.reducer;
