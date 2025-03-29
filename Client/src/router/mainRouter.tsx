@@ -29,8 +29,8 @@ const mainRoute = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <DashBoard /> },
-      { path : "/orders", element: <Orders /> },
+      { index: true, element: <DashBoard />, },
+      { path : "/admin/orders", element: <Orders /> }
     ],
   },
   {

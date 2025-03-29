@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { UserRegister } from "../../Api/AuthApi/AuthApi";
 import Dotspinner from "../../components/ReUse/Dotspinner";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 const SignUp = () => {
   const [show, setShow] = useState(true);
@@ -32,7 +32,10 @@ const SignUp = () => {
       .min(6, "Password must be at least 6 characters")
       .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
       .matches(/[0-9]/, "Password must contain at least one number")
-      .matches(/[^A-Za-z0-9]/, "Password must contain at least one special character")
+      .matches(
+        /[^A-Za-z0-9]/,
+        "Password must contain at least one special character"
+      )
       .required("Password is required"),
     confirmPassword: yup
       .string()
@@ -52,13 +55,29 @@ const SignUp = () => {
   // Function to determine password strength
   // Function to determine password strength
   const getPasswordStrength = (password: string) => {
-    let strength = { text: "Weak", color: "text-red-500", width: "w-1/3 bg-red-500" };
+    let strength = {
+      text: "Weak",
+      color: "text-red-500",
+      width: "w-1/3 bg-red-500",
+    };
 
-    if (password.length >= 6 && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
-      strength = { text: "Medium", color: "text-yellow-500", width: "w-2/3 bg-yellow-500" };
+    if (
+      password.length >= 6 &&
+      /[A-Z]/.test(password) &&
+      /[0-9]/.test(password)
+    ) {
+      strength = {
+        text: "Medium",
+        color: "text-yellow-500",
+        width: "w-2/3 bg-yellow-500",
+      };
     }
     if (password.length >= 8 && /[^A-Za-z0-9]/.test(password)) {
-      strength = { text: "Strong", color: "text-green-500", width: "w-full bg-green-500" };
+      strength = {
+        text: "Strong",
+        color: "text-green-500",
+        width: "w-full bg-green-500",
+      };
     }
 
     return strength;
@@ -84,7 +103,7 @@ const SignUp = () => {
           localStorage.setItem("email", email);
           localStorage.setItem("timer", "300"); // 5 minutes timer
           navigate("/verify"); // Pass email to Verify Page
-        }else {
+        } else {
           setLoading(false);
           Swal.fire({
             title: "Email Already Exists Login",
@@ -97,15 +116,15 @@ const SignUp = () => {
               url("/images/nyan-cat.gif")
               left top
               no-repeat
-            `
-          }).then(()=>{
-            navigate("/Login")
-          })
+            `,
+          }).then(() => {
+            navigate("/Login");
+          });
         }
       })
       .catch((error) => {
         setLoading(false);
-       console.log(error.data)
+        console.log(error.data);
       });
   };
 
@@ -115,7 +134,10 @@ const SignUp = () => {
   return (
     <div className="w-full h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] mobile:items-center mobile:justify-center mobile:h-auto">
       {/* Image */}
-      <div className="w-1/2 bg-white mobile:hidden tablet:hidden">
+      <div className="relative w-1/2 bg-white mobile:hidden tablet:hidden">
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-5"></div>
+
         <img
           src={img}
           alt="signup"
@@ -309,7 +331,11 @@ const SignUp = () => {
               }relative px-6 py-2 text-white text-lg font-semibold bg-[#24243e] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] transition duration-300 w-[200px] h-[60px] justify-center flex items-center`}
               type="submit"
             >
-              {loading ? <div className="flex">{Dotspinner()} Loading ...</div> : "Sign Up"}
+              {loading ? (
+                <div className="flex">{Dotspinner()} Loading ...</div>
+              ) : (
+                "Sign Up"
+              )}
             </button>
           </div>
         </form>

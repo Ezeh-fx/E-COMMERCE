@@ -38,47 +38,51 @@ const SignIn = () => {
 
   const onSubmit = async (data: any) => {
     setLoading(true);
-    UserLogin(data).then((response) => {
-      console.log(response);
-      if (response.data) {
-        setLoading(false);
-        alert("Login successful. Welcome toyour easy online Shopping.")
-        dispatch(setUser(response))
-        const token : any = jwtDecode(response.data.token)
-        if (token.role === "admin"){
-            navigate("/admin")
-        }else{
-            navigate("/")
-        }
-      } else {
-        setLoading(false);
-        Swal.fire({
-          title: "Email Dose Not Exists Register",
-          width: 600,
-          padding: "3em",
-          color: "#716add",
-          background: "#fff url(/images/trees.png)",
-          backdrop: `
+    UserLogin(data)
+      .then((response) => {
+        console.log(response);
+        if (response.data) {
+          setLoading(false);
+          alert("Login successful. Welcome toyour easy online Shopping.");
+          dispatch(setUser(response));
+          const token: any = jwtDecode(response.data.token);
+          if (token.role === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/");
+          }
+        } else {
+          setLoading(false);
+          Swal.fire({
+            title: "Email Dose Not Exists Register",
+            width: 600,
+            padding: "3em",
+            color: "#716add",
+            background: "#fff url(/images/trees.png)",
+            backdrop: `
                     rgba(0,0,123,0.4)
                     url("/images/nyan-cat.gif")
                     left top
                     no-repeat
                   `,
-        }).then(() => {
-          navigate("/register");
-        });
-      }
-    })
-    .catch((error) => {
-      setLoading(false);
-     console.log(error.data)
-    });
+          }).then(() => {
+            navigate("/register");
+          });
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error.data);
+      });
   };
 
   return (
     <div className="w-full h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] mobile:items-center mobile:justify-center mobile:h-auto">
       {/* Image */}
-      <div className="w-1/2 bg-white mobile:hidden tablet:hidden ">
+      <div className="relative w-1/2 bg-white mobile:hidden tablet:hidden">
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-5"></div>
+
         <img
           src={img}
           alt="signup"
@@ -161,7 +165,11 @@ const SignIn = () => {
             </p>
             {/* Sign Up */}
             <button className="relative px-6 py-2 text-white text-lg font-semibold bg-[#24243e] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] transition duration-300 w-[200px] h-[60px]">
-              {loading ? <div className="flex gap-1">{Dotspinner()} Loading...</div> : "Login"}
+              {loading ? (
+                <div className="flex gap-4 text-[10px]">{Dotspinner()} Loading...</div>
+              ) : (
+                "Login"
+              )}
             </button>
           </div>
 
