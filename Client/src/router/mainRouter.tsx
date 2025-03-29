@@ -7,6 +7,7 @@ import Verify from "../pages/Auth/Verify";
 import HomePage from "../pages/HomePage";
 import AdminDashBoard from "../pages/DashBoard/AdminDashBoard";
 import DashBoard from "../pages/DashBoard/DashBoard";
+import Orders from "../pages/DashBoard/Order";
 import ProtectedRoute from "./ProtectiveRoute"; // Fixed import
 
 const mainRoute = createBrowserRouter([
@@ -29,6 +30,7 @@ const mainRoute = createBrowserRouter([
     ),
     children: [
       { index: true, element: <DashBoard /> },
+      { path : "/orders", element: <Orders /> },
     ],
   },
   {

@@ -161,7 +161,7 @@ const SignIn = () => {
             </p>
             {/* Sign Up */}
             <button className="relative px-6 py-2 text-white text-lg font-semibold bg-[#24243e] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] transition duration-300 w-[200px] h-[60px]">
-              {loading ? <div>{Dotspinner()} Loading...</div> : "Login"}
+              {loading ? <div className="flex gap-1">{Dotspinner()} Loading...</div> : "Login"}
             </button>
           </div>
 
