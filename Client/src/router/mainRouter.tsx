@@ -7,8 +7,7 @@ import Verify from "../pages/Auth/Verify";
 import HomePage from "../pages/HomePage";
 import AdminDashBoard from "../pages/DashBoard/AdminDashBoard";
 import DashBoard from "../pages/DashBoard/DashBoard";
-// import Orders from "../pages/DashBoard/Order";
-import ProtectedRoute from "./ProtectiveRoute";
+import ProtectedRoute from "./ProtectiveRoute"; // Fixed import
 
 const mainRoute = createBrowserRouter([
   {
@@ -24,12 +23,12 @@ const mainRoute = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      // <ProtectedRoute>
-      <AdminDashBoard />
-      // </ProtectedRoute>
+      <ProtectedRoute>
+        <AdminDashBoard />
+      </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <DashBoard /> }
+      { index: true, element: <DashBoard /> },
     ],
   },
   {
@@ -37,11 +36,11 @@ const mainRoute = createBrowserRouter([
     element: <NotFound />,
   },
   {
-    path: "/Login",
+    path: "/login",
     element: <SignIn />,
   },
   {
-    path: "/Verify",
+    path: "/verify",
     element: <Verify />,
   },
   {

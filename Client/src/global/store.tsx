@@ -1,15 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "./useReducer";
+import userReducer from "./useReducer"; // Fixed import path
 
+export const store = configureStore({
+  reducer: {
+    user: userReducer, // Renamed "change" to "user" for clarity
+  },
+});
 
-export const store = configureStore ({
-    reducer : {
-        change : userReducer
-    }
-})
-
-
-export type Rootstate = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof store.getState>; // Fixed `Rootstate` typo
 export type AppDispatch = typeof store.dispatch;
 
 

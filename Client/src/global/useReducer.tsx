@@ -1,27 +1,24 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
-  user : null
-}
+  user: null,
+};
 
-
-const userReducer = createSlice({
+const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers : {
-    setUser : (state , {payload}) => {
-       state.user = payload.user
+  reducers: {
+    setUser: (state, action: PayloadAction<any>) => {
+      state.user = action.payload; // Directly store payload
     },
-    logOut : (state) => {
-      state.user = null
-    }
-  }
-})
+    logOut: (state) => {
+      state.user = null;
+    },
+  },
+});
 
-export const { setUser, logOut } = userReducer.actions;
-export default userReducer.reducer;
-
-
+export const { setUser, logOut } = userSlice.actions;
+export default userSlice.reducer;
 
 
 
