@@ -28,13 +28,17 @@ const ForgetPassword = () => {
         console.log(res);
         if (res.data) {
           setLoading(false);
-          alert("Otp code sent to gmail proceed to reset password");
+          alert("OTP code sent to Gmail. Proceed to reset password.");
           navigate("/verify-otp");
         }else {
           setLoading(false);
-          <div className="flex items-center justify-center min-h-screen bg-gray-100">
-          <Alert message="Username must contain only ASCII characters!" />
-        </div>
+          setTimeout(() => {
+            return (
+              <div className="flex items-center justify-center min-h-screen bg-gray-100">
+              <Alert message= {`${res.data.message}`} />
+            </div>
+            )
+          }, 5000);
         }
       })
       .catch((error) => {

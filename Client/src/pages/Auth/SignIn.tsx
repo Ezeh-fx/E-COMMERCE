@@ -175,9 +175,11 @@ const SignIn = () => {
 
           {/* Forget Password */}
           <div className="flex justify-center w-full mt-5">
-            <p className="font-bold text-white cursor-pointer hover:underline w-fit">
+           <Link to="/forgot-password">
+           <p className="font-bold text-white cursor-pointer hover:underline w-fit">
               Forget Password?
             </p>
+           </Link>
           </div>
         </form>
       </div>

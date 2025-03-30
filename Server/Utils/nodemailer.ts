@@ -102,14 +102,14 @@ export const ForgetPasswordEmail = async (user: any) => {
     const buildFile = path.join(__dirname, "../view/ForgetPassword.ejs");
 
     const data = await ejs.renderFile(buildFile, {
-      name: user.name,
+      firstname: user.firstname,
       OtpCode: user.OtpCode,
     });
 
     const mailOptions = {
       from: "E-shop <your-email@gmail.com>",
       to: user.email,
-      subject: "Account Verification",
+      subject: "Reset Password",
       html: data,
     };
 
