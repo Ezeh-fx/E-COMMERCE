@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ForgetPasswordSend } from "../Api/AuthApi/AuthApi";
 import Alert from "../components/ReUse/Alert";
-import { motion } from "framer-motion";
 
 const ForgetPassword = () => {
   // Validation Schema
@@ -61,18 +60,6 @@ const ForgetPassword = () => {
     <div className="flex items-center justify-center h-screen bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29]">
       <div className="flex flex-col items-center gap-8">
         <h1 className="text-white text-[40px] font-bold">Forget Password</h1>
-        {/* Show Alert If There Is an Error */}
-        {alertMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="fixed px-4 py-2 text-white transform -translate-x-1/2 bg-red-500 rounded-lg shadow-lg top-5 left-1/2"
-          >
-           <Alert message={alertMessage} />
-          </motion.div>
-        )}
         {/* Form */}
         <form
           onSubmit={handleSubmit(HandleSend)}
@@ -101,6 +88,19 @@ const ForgetPassword = () => {
           </button>
         </form>
       </div>
+      {/* Show Alert If There Is an Error */}
+      {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
+      {/* {alertMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+            className="fixed px-4 py-2 text-white transform -translate-x-1/2 bg-red-500 rounded-lg shadow-lg top-5 left-1/2"
+          >
+           <Alert message={alertMessage} />
+          </motion.div>
+        )} */}
     </div>
   );
 };
