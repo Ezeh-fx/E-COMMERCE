@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ForgetPasswordSend } from "../Api/AuthApi/AuthApi";
+import Alert from "../components/ReUse/Alert";
 
 const ForgetPassword = () => {
   const schema = yup.object().shape({
@@ -31,6 +32,9 @@ const ForgetPassword = () => {
           navigate("/verify-otp");
         }else {
           setLoading(false);
+          <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          <Alert message="Username must contain only ASCII characters!" />
+        </div>
         }
       })
       .catch((error) => {
