@@ -89,3 +89,37 @@ export const UserLogin = async (credentials: LoginCredentials) => {
     return axiosError.response?.data || { message: "An error occurred" };
   }
 };
+
+export const ForgetPasswordSend = async (email : string) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:2343/api/forgot-password",
+      email
+    );
+    return response.data;
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError;
+    console.error(
+      "OTP Request Error:",
+      axiosError.response?.data || axiosError.message
+    );
+    return axiosError.response?.data || { message: "An error occurred" };
+  }
+};
+
+export const verifyOTPAndUpdatePassword = async (OtpCode : number, password : string) => {
+   try {
+    const respone = await axios.post(
+      "http://localhost:2343/api/reset-password",
+      { OtpCode, password }
+    )
+    return respone.data;
+   } catch (error: unknown) {
+    const axiosError = error as AxiosError;
+    console.error(
+      "Password Update Error:",
+      axiosError.response?.data || axiosError.message
+    );
+    return axiosError.response?.data || { message: "An error occurred" };
+  }
+};

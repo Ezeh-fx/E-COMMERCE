@@ -73,10 +73,9 @@ const Verify = () => {
 
   // Handle Resend OTP
   const handleResend = async () => {
-    setTimer(300); // ✅ Reset timer to 5 minutes
-    localStorage.setItem("timer", "300"); // ✅ Persist new timer
-
     try {
+      setTimer(300); // ✅ Reset timer to 5 minutes
+      localStorage.setItem("timer", "300"); // ✅ Persist new timer
       await UserOtpResend(email);
       alert("📩 OTP has been resent to your email.");
     } catch (error: any) {
@@ -85,7 +84,7 @@ const Verify = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] w-full h-screen flex justify-center items-center flex-col">
+    <div className="bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] w-full h-screen flex justify-center items-center flex-col mobile:h-screen tablet:h-screen  mobile:items-center mobile:justify-center ">
       <div>
         <h1 className="text-3xl font-bold text-center text-white">
           Verify Your Account
@@ -101,7 +100,7 @@ const Verify = () => {
 
       <form
         onSubmit={handleVerify}
-        className="mt-8 w-[50%] flex flex-col gap-6 items-center"
+        className="mt-8 w-[50%] mobile:w-full mobile:p-5 flex flex-col gap-6 items-center"
       >
         {/* OTP Input */}
         <input
@@ -109,7 +108,7 @@ const Verify = () => {
           value={otp}
           onChange={handleChange}
           maxLength={4}
-          className="w-[60%] p-2 text-4xl font-bold text-center bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          className="w-[60%] p-2 text-4xl font-bold text-center bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mobile:w-{100%} tablet:w-[100%]"
           placeholder="____"
         />
 

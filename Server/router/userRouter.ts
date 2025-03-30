@@ -9,11 +9,13 @@ import {
   CreateUser,
   DeleteUser,
   EmptyCart,
+  ForgetPassword,
   getAllUser,
   getOneUser,
   LoginUser,
   removeFromCart,
   ResendOtp,
+  UpdatePassword,
   updateToadmn,
   VerifyAccount,
 } from "../controller/userController";
@@ -43,5 +45,7 @@ UserRoute.patch("/update-to-admin/:userId", authenticate_token, updateToadmn);
 UserRoute.post("/add", addToCart);
 UserRoute.post("/remove", removeFromCart);
 UserRoute.post("/empty", EmptyCart);
+UserRoute.post("/forgot-password", ForgetPassword);
+UserRoute.post("/reset-password", UpdatePassword);
 
 export default UserRoute;
