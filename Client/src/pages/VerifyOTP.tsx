@@ -12,7 +12,6 @@ const VerifyOTP = () => {
   const [step, setStep] = useState<"otp" | "password">("otp");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  // const [message, setMessage] = useState("");
   const [validOtp, setValidOtp] = useState<number | null>(null); // store verified OTP
   const [show, setShow] = useState(true);
   const [passwordStrength, setPasswordStrength] = useState<{
@@ -109,21 +108,18 @@ const VerifyOTP = () => {
       if (response.data.message === "OTP is valid") {
         setValidOtp(Number(otp));
         setStep("password");
-        // setMessage("✅ OTP verified. Please enter your new password.");
+        console.log("✅ OTP verified. Please enter your new password.");
       } else {
-        // setMessage("❌ Invalid OTP. Please try again.");
         setOtp(""); // Reset OTP input on failure
       }
     } catch (err: any) {
-      const msg = err.response?.data?.message || "⚠️ Error verifying OTP.";
-      // setMessage(msg);
       setOtp(""); // Reset OTP input on error
     }
   };
 
   const handleResetPassword = async () => {
     if (newPassword !== confirmPassword) {
-      // return setMessage("❌ Passwords do not match.");
+      console.log("❌ Passwords do not match.");
     }
 
     try {
@@ -136,13 +132,13 @@ const VerifyOTP = () => {
       );
 
       if (response.data.message === "Password Changed") {
-        // setMessage("✅ Password successfully changed!");
+        console.log("✅ Password successfully changed!");
         navigate("/Login")
       } else {
-        // setMessage(response.data.message || "Error occurred.");
+        console.log("❌ Error occurred while changing password.");
       }
     } catch (error: any) {
-      // setMessage(error.response?.data?.message || "⚠️ Server error.");
+      console.error("❌ Error:", error.message);
     }
   };
 
