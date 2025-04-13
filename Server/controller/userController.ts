@@ -661,15 +661,6 @@ export const UpdatePassword = asyncHandler(
     try {
       const { OtpCode, password } = req.body;
 
-      if (!password) {
-        return next(
-          new AppError({
-            message: "password required",
-            httpCode: HttpCode.FIELD_REQUIRED,
-          })
-        );
-      }
-
       // Find user by OTP
       const checkingOTP = await User.findOne({ OtpCode });
 
@@ -682,13 +673,19 @@ export const UpdatePassword = asyncHandler(
         );
       }
 
-      // Hash new password
+      // If password is missing, just treat this as a "valid OTP" check
+      if (!password) {
+        return res.status(HttpCode.OK).json({
+          message: "OTP is valid",
+        });
+      }
+
+      // Continue password reset
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      // Update password and clear OTP
       const changepassword = await User.findByIdAndUpdate(
-        checkingOTP._id, // ✅ Corrected ID reference
+        checkingOTP._id,
         {
           password: hashedPassword,
           OtpCode: null,
