@@ -12,7 +12,7 @@ const VerifyOTP = () => {
   const [step, setStep] = useState<"otp" | "password">("otp");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
   const [validOtp, setValidOtp] = useState<number | null>(null); // store verified OTP
   const [show, setShow] = useState(true);
   const [passwordStrength, setPasswordStrength] = useState<{
@@ -109,21 +109,21 @@ const VerifyOTP = () => {
       if (response.data.message === "OTP is valid") {
         setValidOtp(Number(otp));
         setStep("password");
-        setMessage("✅ OTP verified. Please enter your new password.");
+        // setMessage("✅ OTP verified. Please enter your new password.");
       } else {
-        setMessage("❌ Invalid OTP. Please try again.");
+        // setMessage("❌ Invalid OTP. Please try again.");
         setOtp(""); // Reset OTP input on failure
       }
     } catch (err: any) {
       const msg = err.response?.data?.message || "⚠️ Error verifying OTP.";
-      setMessage(msg);
+      // setMessage(msg);
       setOtp(""); // Reset OTP input on error
     }
   };
 
   const handleResetPassword = async () => {
     if (newPassword !== confirmPassword) {
-      return setMessage("❌ Passwords do not match.");
+      // return setMessage("❌ Passwords do not match.");
     }
 
     try {
@@ -136,13 +136,13 @@ const VerifyOTP = () => {
       );
 
       if (response.data.message === "Password Changed") {
-        setMessage("✅ Password successfully changed!");
+        // setMessage("✅ Password successfully changed!");
         navigate("/Login")
       } else {
-        setMessage(response.data.message || "Error occurred.");
+        // setMessage(response.data.message || "Error occurred.");
       }
     } catch (error: any) {
-      setMessage(error.response?.data?.message || "⚠️ Server error.");
+      // setMessage(error.response?.data?.message || "⚠️ Server error.");
     }
   };
 
@@ -290,7 +290,7 @@ const VerifyOTP = () => {
             </>
           )}
 
-          {message && <p className="mt-4 text-yellow-300">{message}</p>}
+          {/* {message && <p className="mt-4 text-yellow-300">{message}</p>} */}
         </form>
       </div>
     </div>
