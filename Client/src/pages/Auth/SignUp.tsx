@@ -100,7 +100,6 @@ const SignUp = () => {
           alert("Registration successful. You can now verify your account.");
           // ✅ Save email to localStorage
           localStorage.setItem("email", email);
-          localStorage.setItem("timer", "300"); // 5 minutes timer
           navigate("/verify"); // Pass email to Verify Page
         } else {
           setLoading(false);
