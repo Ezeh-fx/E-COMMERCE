@@ -65,9 +65,7 @@ const SignIn = () => {
                     left top
                     no-repeat
                   `,
-          }).then(() => {
-            navigate("/register");
-          });
+          })
         }
       })
       .catch((error) => {
