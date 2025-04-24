@@ -53,7 +53,6 @@ const SignUp = () => {
   });
 
   // Function to determine password strength
-  // Function to determine password strength
   const getPasswordStrength = (password: string) => {
     let strength = {
       text: "Weak",

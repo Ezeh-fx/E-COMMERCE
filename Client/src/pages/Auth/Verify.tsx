@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   UserOtpResend,
@@ -10,27 +10,8 @@ const Verify = () => {
   const [email] = useState(localStorage.getItem("email") || ""); // Persist email
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
-  const [timer, setTimer] = useState(
-    parseInt(localStorage.getItem("timer") || "300", 10) // Persist timer
-  );
   const [loading, setLoading] = useState(false);
 
-  // Timer logic
-  useEffect(() => {
-    if (timer > 0) {
-      const interval = setInterval(() => {
-        setTimer((prev) => {
-          const newTime = prev - 1;
-          localStorage.setItem("timer", newTime.toString()); // ✅ Persist timer
-          return newTime;
-        });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    } else {
-      localStorage.removeItem("timer"); // ✅ Clear timer when it hits 0
-    }
-  }, [timer]);
 
   // Handle OTP input (4-digit only)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +42,6 @@ const Verify = () => {
         console.log(response);
         setLoading(false);
         localStorage.removeItem("email");
-        localStorage.removeItem("timer"); // ✅ Clear timer after success
         alert("OTP Verified. You can now log in.");
         navigate("/Login");
       })
@@ -74,7 +54,6 @@ const Verify = () => {
   // Handle Resend OTP
   const handleResend = async () => {
     try {
-      setTimer(300); // ✅ Reset timer to 5 minutes
       localStorage.setItem("timer", "300"); // ✅ Persist new timer
       await UserOtpResend(email);
       alert("📩 OTP has been resent to your email.");
@@ -91,10 +70,7 @@ const Verify = () => {
         </h1>
         <p className="mt-4 text-center text-white">
           We have sent an OTP to <b>{email}</b>. Please enter it below.
-          <br /> OTP will expire in{" "}
-          <b>
-            {Math.floor(timer / 60)}:{String(timer % 60).padStart(2, "0")}
-          </b>
+          <br /> OTP will expire in 5 min
         </p>
       </div>
 
@@ -121,9 +97,8 @@ const Verify = () => {
           {loading ? <div className="flex gap-4">{Dotspinner()} Verifying...</div> : "Verify OTP"}
         </button>
 
-        {/* Resend OTP Button (Visible only when timer reaches 0) */}
-        {timer === 30 && (
-          <p className="text-white">
+        {/* Resend OTP Button */}
+        <p className="text-white">
             Did not receive code?{" "}
             <span
               onClick={handleResend}
@@ -132,7 +107,6 @@ const Verify = () => {
               Resend
             </span>
           </p>
-        )}
       </form>
     </div>
   );
