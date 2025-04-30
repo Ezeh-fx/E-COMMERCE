@@ -11,7 +11,6 @@ import Orders from "../pages/DashBoard/Order";
 import ProtectedRoute from "./ProtectiveRoute"; // Fixed import
 import ForgotPassword from "../pages/ForgetPassword";
 import VerifyOTP from "../pages/ResetPassword";
-import ResetPassword from "../pages/ResetPassword";
 
 const mainRoute = createBrowserRouter([
   {
@@ -54,7 +53,7 @@ const mainRoute = createBrowserRouter([
   },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/verify-otp", element: <VerifyOTP /> },
-  { path: "/reset-password", element: <ResetPassword /> },
+  // { path: "/reset-password", element: <ResetPassword /> },
 ]);
 
 export default mainRoute;

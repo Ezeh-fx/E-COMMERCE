@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ForgetPasswordSend } from "../Api/AuthApi/AuthApi";
 import Alert from "../components/ReUse/Alert";
+import img from "../assets/signUp.jpg";
 
 const ForgetPassword = () => {
   // Validation Schema
@@ -57,39 +58,65 @@ const ForgetPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] mobile:h-screen tablet:h-screen  mobile:items-center mobile:justify-center">
-      <div className="flex flex-col items-center gap-8 mobile:w-full">
-        <h1 className="text-white text-[40px] font-bold">Forget Password</h1>
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit(HandleSend)}
-          className="flex flex-col items-center w-auto gap-5 mobile:w-full mobile:p-5"
-        >
-          {/* <div> */}
-            <input
-              type="text"
-              placeholder="Email"
-              {...register("email")}
-              className="w-[700px] p-2  font-bold  bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mobile:w-full tablet:w-[100%]"
-            />
-            {errors.email && (
-              <div className="text-xs text-red-600">
-                {errors.email?.message}
-              </div>
-            )}
-          {/* </div> */}
+    <div className="flex w-full h-screen bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] ">
+        {/* Image */}
+      <div className="relative w-1/2 bg-white mobile:hidden tablet:hidden">
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-5"></div>
 
-          <button
-            type="submit"
-            className="w-[70%] p-2 text-white bg-blue-500 rounded"
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Send OTP"}
-          </button>
-        </form>
+        <img
+          src={img}
+          alt="signup"
+          className="object-cover object-left w-full h-full"
+        />
       </div>
-      {/* Show Alert If There Is an Error */}
-      {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
+
+      {/* Form */}
+      <div className="flex flex-col items-center justify-center w-1/2 h-full mobile:w-full mobile:h-screen tablet:w-full">
+        {/* Icon */}
+        <div className="flex flex-col items-center justify-center w-full h-full gap-4 mobile:w-full mobile:h-auto mobile:px-4 mobile:gap-0">
+          <h1 className="text-3xl font-bold text-white">Forget Password</h1>
+          <form
+            className="flex flex-col items-start justify-center w-auto h-auto gap-4 mobile:w-full mobile:h-auto mobile:px-4 mobile:gap-0"
+            onSubmit={handleSubmit(HandleSend)}
+          >
+            {/* Input Email */}
+            <div className="flex flex-col w-[550px] mobile:w-full">
+              <label className="font-bold text-white">Email</label>
+              <input
+                type="email"
+                {...register("email")}
+                placeholder="Email"
+                className="w-full p-2 my-2 bg-white font-semibold rounded-md outline-none h-[60px]"
+              />
+
+              {errors.email && (
+                <div className="text-xs text-red-600">
+                  {errors.email?.message}
+                </div>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-[550px] p-2 my-2 font-semibold text-white bg-[#e67e22] rounded-md outline-none h-[60px] ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {loading ? "Loading..." : "Send OTP"}
+            </button>
+          </form>
+        </div>
+        
+        {/* Alert Message */}
+        {alertMessage && (
+          <div className="absolute top-0 right-0 p-4">
+            <Alert message={alertMessage} onClose={() => setAlertMessage(null)} />
+          </div>
+        )}
+        </div>
     </div>
   );
 };
