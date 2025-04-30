@@ -1,4 +1,5 @@
 import Logo from "../../assets/Logo.png"
+import { Link } from "react-router-dom"
 
 const Header = () => {
     return (
@@ -25,8 +26,12 @@ const Header = () => {
                 
             {/* Login/Register Button */}
             <div className="flex items-center justify-center gap-[20px]">
-                <button className="text-white text-[17px] bg-[#24243e] rounded-lg drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] hover:shadow-[0_0_15px_rgba(255,255,255,0.5)]  transition duration-300 px-[20px] py-[10px]">Login</button>
-                <button className="text-white text-[17px] px-[20px] py-[10px] bg-[#24243e] rounded-lg drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] transition duration-300">Register</button>
+               <Link to={"/login"}>
+               <button className="text-white text-[17px] bg-[#24243e] rounded-lg drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] hover:shadow-[0_0_15px_rgba(255,255,255,0.5)]  transition duration-300 px-[20px] py-[10px]">Login</button>
+               </Link>
+              <Link to={"/register"}>
+               <button className="text-white text-[17px] px-[20px] py-[10px] bg-[#24243e] rounded-lg drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] transition duration-300">Register</button>
+              </Link>
             </div>
         </div>
     ) 

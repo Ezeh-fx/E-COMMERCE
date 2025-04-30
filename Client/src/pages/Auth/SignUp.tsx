@@ -1,5 +1,5 @@
 import img from "../../assets/signUp.jpg";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { IoEyeOutline, IoEyeOffSharp } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { UserRegister } from "../../Api/AuthApi/AuthApi";
 import Dotspinner from "../../components/ReUse/Dotspinner";
 import Swal from "sweetalert2";
+import { ThreeCircles } from "react-loader-spinner";
 
 const SignUp = () => {
   const [show, setShow] = useState(true);
@@ -18,8 +19,13 @@ const SignUp = () => {
     width: string;
   }>({ text: "", color: "text-gray-400", width: "w-0" });
   const [loading, setLoading] = useState(false);
+  const [start, setStart] = useState(true);
   const [showStrengthBar, setShowStrengthBar] = useState(false); // Hide initially
   const [email, setEmail] = useState("");
+
+    useEffect(() => {
+      setTimeout(() => setStart(false), 2000);
+    }, []);
 
   // Yup Schema for validation
   const schema = yup.object().shape({
@@ -130,7 +136,22 @@ const SignUp = () => {
     setShow((prevShow) => !prevShow);
   };
   return (
-    <div className="w-full h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] mobile:items-center mobile:justify-center mobile:h-auto">
+   <div className="w-full">
+      {
+        start ? (
+            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1c1a32]">
+                    <ThreeCircles
+                      visible={true}
+                      height="100"
+                      width="100"
+                      color="#e67e22"
+                      ariaLabel="three-circles-loading"
+                    />
+                    <p className="mt-3 text-lg font-medium text-[#e67e22]">Loading...</p>
+                  </div>
+        ) : (
+          <>
+           <div className="w-full h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] mobile:items-center mobile:justify-center mobile:h-auto">
       {/* Image */}
       <div className="relative w-1/2 bg-white mobile:hidden tablet:hidden">
         {/* Overlay */}
@@ -345,6 +366,10 @@ const SignUp = () => {
         </div> */}
       </div>
     </div>
+          </>
+        )
+      }
+   </div>
   );
 };
 

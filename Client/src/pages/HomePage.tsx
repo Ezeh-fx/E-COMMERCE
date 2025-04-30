@@ -5,6 +5,9 @@ import { GRID1 } from "../components/static/data";
 import { GRID2 } from "../components/static/data";
 import about from "../assets/About.png";
 import contact from "../assets/Contact.png"
+import { FaFacebook } from "react-icons/fa";
+import { BsTwitterX } from "react-icons/bs";
+import { IoIosArrowRoundForward } from "react-icons/io";
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
@@ -180,16 +183,31 @@ const HomePage = () => {
           </div>
 
           {/* Contact us */}
-          <div className="flex flex-col items-center justify-center w-full h-auto gap-10 mt-20 bg-red-600">
+          <div className="flex flex-col items-center justify-center w-full h-auto gap-10 mt-20">
             <h1 className="text-[40px] font-bold text-center text-white mt-10">
               Contact us
             </h1>
 
-            <div className="flex items-center justify-around w-full h-auto bg-slate-700">
+            <div className="flex items-center justify-around w-full h-auto ">
               <img src={contact} alt="" className="w-[40%] "/>
               
-              <div>
+              <div className="w-auto h-full font-normal text-[32px] leading-[100%] text-white flex flex-col gap-5">
+                  <span>Info at quickcart@gmail.com</span>
+                  <span>tele: +23490000000011</span>
+
+
+                  <div className="flex items-center gap-2">
+                  <FaFacebook />
+                  <p>@quickcart</p>
+                  </div>
                   
+                  <div className="flex items-center gap-2">
+                  <BsTwitterX />
+                  <p>@quickcart</p>
+                  </div>
+
+                  <p className="text-[20px] flex justify-center items-center gap-1">Want to message us click  <IoIosArrowRoundForward size={30}/>
+                  <span className="text-[#E67E25] cursor-pointer hover:underline">Contact Us</span></p>
               </div>
             </div>
           </div>
