@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-const VerifyOTP = () => {
+const ResetPassword = () => {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState<"otp" | "password">("otp");
   const [newPassword, setNewPassword] = useState("");
@@ -271,4 +271,4 @@ const VerifyOTP = () => {
   );
 
 }
-export default VerifyOTP;
+export default ResetPassword;

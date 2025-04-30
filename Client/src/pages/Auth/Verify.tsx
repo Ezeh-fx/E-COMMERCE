@@ -5,6 +5,7 @@ import {
   UserVerifyRegistration,
 } from "../../Api/AuthApi/AuthApi";
 import Dotspinner from "../../components/ReUse/Dotspinner";
+import img from "../../assets/signUp.jpg";
 
 const Verify = () => {
   const [email] = useState(localStorage.getItem("email") || ""); // Persist email
@@ -63,7 +64,21 @@ const Verify = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] w-full h-screen flex justify-center items-center flex-col mobile:h-screen tablet:h-screen  mobile:items-center mobile:justify-center ">
+    <div className="bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] w-full h-screen flex mobile:h-screen tablet:h-screen  mobile:items-center mobile:justify-center ">
+     {/* Image */}
+     <div className="relative w-1/2 bg-white mobile:hidden tablet:hidden">
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-5"></div>
+
+        <img
+          src={img}
+          alt="signup"
+          className="object-cover object-left w-full h-full"
+        />
+      </div>
+
+      {/* From */}
+      <div className="flex flex-col items-center justify-center w-1/2 h-full">
       <div>
         <h1 className="text-3xl font-bold text-center text-white">
           Verify Your Account
@@ -76,7 +91,7 @@ const Verify = () => {
 
       <form
         onSubmit={handleVerify}
-        className="mt-8 w-[50%] mobile:w-full mobile:p-5 flex flex-col gap-6 items-center"
+        className="mt-8 w-[100%] mobile:w-full mobile:p-5 flex flex-col gap-6 items-center"
       >
         {/* OTP Input */}
         <input
@@ -84,14 +99,14 @@ const Verify = () => {
           value={otp}
           onChange={handleChange}
           maxLength={4}
-          className="w-[60%] p-2 text-4xl font-bold text-center bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mobile:w-{100%} tablet:w-[100%]"
-          placeholder="____"
+         className="w-[70%] p-2 bg-white border rounded-md focus:outline-none h-[60px]"
+          placeholder="Enter 6-digit code"
         />
 
         {/* Verify Button */}
         <button
           type="submit"
-          className="p-2 mt-4 text-white bg-blue-500 rounded-md focus:outline-none w-[100%] font-bold text-[30px] flex items-center justify-center cursor-pointer"
+           className="w-[550px] p-2 my-2 font-semibold text-white bg-[#e67e22] rounded-md outline-none h-[60px] cursor-pointer"
           disabled={otp.length !== 4 || loading}
         >
           {loading ? <div className="flex gap-4">{Dotspinner()} Verifying...</div> : "Verify OTP"}
@@ -102,12 +117,13 @@ const Verify = () => {
             Did not receive code?{" "}
             <span
               onClick={handleResend}
-              className="text-blue-800 cursor-pointer"
+              className="text-[#e67e22] cursor-pointer hover:underline"
             >
               Resend
             </span>
           </p>
       </form>
+      </div>
     </div>
   );
 };
