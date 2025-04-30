@@ -31,8 +31,14 @@ const mainRoute = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <DashBoard />, },
-      { path : "/admin/orders", element: <Orders /> }
+      {
+        index: true,
+        element: <DashBoard />,
+      },
+      {
+        path: "/admin/orders",
+        element: <Orders />,
+      },
     ],
   },
   {
@@ -51,13 +57,13 @@ const mainRoute = createBrowserRouter([
     path: "/register",
     element: <SignUp />,
   },
-  { 
-    path: "/forgot-password", 
-    element: <ForgotPassword />
-   },
-  { 
-    path: "/verify-otp", 
-    element: <VerifyOTP /> 
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/verify-otp",
+    element: <VerifyOTP />,
   },
 ]);
 
