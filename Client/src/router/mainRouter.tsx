@@ -51,9 +51,14 @@ const mainRoute = createBrowserRouter([
     path: "/register",
     element: <SignUp />,
   },
-  { path: "/forgot-password", element: <ForgotPassword /> },
-  { path: "/verify-otp", element: <VerifyOTP /> },
-  // { path: "/reset-password", element: <ResetPassword /> },
+  { 
+    path: "/forgot-password", 
+    element: <ForgotPassword />
+   },
+  { 
+    path: "/verify-otp", 
+    element: <VerifyOTP /> 
+  },
 ]);
 
 export default mainRoute;
