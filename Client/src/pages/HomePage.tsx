@@ -4,10 +4,11 @@ import bg from "../assets/bg_img.png";
 import { GRID1 } from "../components/static/data";
 import { GRID2 } from "../components/static/data";
 import about from "../assets/About.png";
-import contact from "../assets/Contact.png"
+import contact from "../assets/Contact.png";
 import { FaFacebook } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { IoIosArrowRoundForward } from "react-icons/io";
+import { Link } from "react-router-dom";
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
@@ -52,12 +53,14 @@ const HomePage = () => {
               <p className="mb-6 text-lg md:text-2xl">
                 Fast, Secure, and Easy Transfers
               </p>
-              <button
-                className="bg-[#f39c12] text-white font-bold py-3 px-6  hover:bg-[#e67e22] transition rounded-[24px] bg-[#E56623B2]
+              <Link to={"/product"}>
+                <button
+                  className="bg-[#f39c12] text-white font-bold py-3 px-6  hover:bg-[#e67e22] transition rounded-[24px] bg-[#E56623B2]
  drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] w-[385px] h-[75px] text-[24px] leading-[100%]"
-              >
-                Veiw Product
-              </button>
+                >
+                  Veiw Product
+                </button>
+              </Link>
             </div>
           </div>
 
@@ -84,8 +87,18 @@ const HomePage = () => {
                     </p>
                   </div>
 
-                  {/* Product Price */}
-                  <p className="text-[#FFFFFF]">{items.price}</p>
+                  <div className="flex items-center justify-between py-2">
+                    {/* Product Price */}
+                    <p className="text-[#FFFFFF]">{items.price}</p>
+
+                    {/* Purchase Button */}
+                    <button
+                      className="bg-[#E56623B2] text-white font-bold py-3 px-6  hover:bg-[#e67e22] transition rounded-[15px] 
+  drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)]  h-[50px] text-[24px] leading-[100%] w-auto"
+                    >
+                      Add to cart
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -96,11 +109,11 @@ const HomePage = () => {
             <h1 className="text-[40px] font-bold text-center text-white mt-10">
               Least Products
             </h1>
-            <div className="grid w-full h-auto grid-cols-4 gap-5 place-items-center">
+            <div className="grid w-full h-auto grid-cols-4 place-items-center">
               {GRID2.map((items, i) => (
                 <div
                   key={i}
-                  className="w-[90%] h-[100%] shadow-[rgba(0,0,0,0.24)_0px_3px_8px] gap-5 flex flex-col mb-20"
+                  className="w-[90%] h-[90%] shadow-[rgba(0,0,0,0.24)_0px_3px_8px] gap-5 flex flex-col mb-20 mt-5"
                 >
                   {/* Product Image*/}
                   <div>
@@ -114,15 +127,28 @@ const HomePage = () => {
                     </p>
                   </div>
 
-                  {/* Product Price */}
-                  <p className="text-[#FFFFFF]">{items.price}</p>
+                  <div className="flex items-center justify-between py-2">
+                    {/* Product Price */}
+                    <p className="text-[#FFFFFF]">{items.price}</p>
+
+                    {/* Purchase Button */}
+                    <button
+                      className="bg-[#E56623B2] text-white font-bold py-3 px-6  hover:bg-[#e67e22] transition rounded-[15px] 
+  drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)]  h-[50px] text-[24px] leading-[100%] w-auto"
+                    >
+                      Add to cart
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* About Us */}
-          <div className="flex flex-col items-center justify-center w-full h-auto gap-10 px-5 mt-20">
+          <div
+            className="flex flex-col items-center justify-center w-full h-auto gap-10 px-5 mt-20"
+            id="about"
+          >
             {/* Heading */}
             <h1 className="text-[40px] font-bold text-center text-white mt-10">
               About Us
@@ -183,31 +209,39 @@ const HomePage = () => {
           </div>
 
           {/* Contact us */}
-          <div className="flex flex-col items-center justify-center w-full h-auto gap-10 mt-20">
+          <div
+            className="flex flex-col items-center justify-center w-full h-auto gap-10 mt-20"
+            id="contact"
+          >
             <h1 className="text-[40px] font-bold text-center text-white mt-10">
               Contact us
             </h1>
 
             <div className="flex items-center justify-around w-full h-auto ">
-              <img src={contact} alt="" className="w-[40%] "/>
-              
+              <img src={contact} alt="" className="w-[40%] " />
+
               <div className="w-auto h-full font-normal text-[32px] leading-[100%] text-white flex flex-col gap-5">
-                  <span>Info at quickcart@gmail.com</span>
-                  <span>tele: +23490000000011</span>
+                <span>Info at quickcart@gmail.com</span>
+                <span>tele: +23490000000011</span>
 
-
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <FaFacebook />
                   <p>@quickcart</p>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
+                </div>
+
+                <div className="flex items-center gap-2">
                   <BsTwitterX />
                   <p>@quickcart</p>
-                  </div>
+                </div>
 
-                  <p className="text-[20px] flex justify-center items-center gap-1">Want to message us click  <IoIosArrowRoundForward size={30}/>
-                  <span className="text-[#E67E25] cursor-pointer hover:underline">Contact Us</span></p>
+                <p className="text-[20px] flex justify-center items-center gap-1">
+                  Want to message us click <IoIosArrowRoundForward size={30} />
+                  <Link to={"/contact"}>
+                    <span className="text-[#E67E25] cursor-pointer hover:underline">
+                      Contact Us
+                    </span>
+                  </Link>
+                </p>
               </div>
             </div>
           </div>

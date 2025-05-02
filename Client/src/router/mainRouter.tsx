@@ -11,6 +11,8 @@ import Orders from "../pages/DashBoard/Order";
 import ProtectedRoute from "./ProtectiveRoute"; // Fixed import
 import ForgotPassword from "../pages/ForgetPassword";
 import ResetPassword from "../pages/ResetPassword";
+import Product from "../pages/Product";
+import Contact from "../pages/Contact";
 
 const mainRoute = createBrowserRouter([
   {
@@ -21,6 +23,14 @@ const mainRoute = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
+      {
+        path: "/product",
+        element: <Product />
+      },
+      {
+        path: "/contact",
+        element: <Contact />
+      }
     ],
   },
   {

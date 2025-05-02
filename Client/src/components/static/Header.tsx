@@ -2,6 +2,12 @@ import Logo from "../../assets/Logo.png"
 import { Link } from "react-router-dom"
 
 const Header = () => {
+  const handleScroll = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
     return (
         <div className="w-full h-auto px-[15px] bg-[#1c1a32] flex justify-between items-center">
 
@@ -15,10 +21,14 @@ const Header = () => {
 
             {/* Navigation Links */}
             <ul className="flex items-center justify-center gap-[30px]">
-              <li  className="text-white text-[17px] list-none cursor-pointer hover:text-[#e67e22]">Home</li>
-              <li  className="text-white text-[17px] list-none cursor-pointer hover:text-[#e67e22]">Products</li>
-              <li  className="text-white text-[17px] list-none cursor-pointer hover:text-[#e67e22]">About</li>
-              <li  className="text-white text-[17px] list-none cursor-pointer hover:text-[#e67e22]">Contact</li>
+            <Link to={"/"}>
+            <li  className="text-white text-[17px] list-none cursor-pointer hover:text-[#e67e22]">Home</li>
+            </Link>
+            <Link to={"/product"}>
+            <li  className="text-white text-[17px] list-none cursor-pointer hover:text-[#e67e22]">Products</li>
+            </Link>
+              <li  className="text-white text-[17px] list-none cursor-pointer hover:text-[#e67e22]" onClick={() => handleScroll("about")}>About</li>
+              <li  className="text-white text-[17px] list-none cursor-pointer hover:text-[#e67e22]" onClick={() => handleScroll("contact")}>Contact</li>
                 {/* <a  className="text-white text-[17px] hover:text-[#e67e22]">Login</a>
               <li  className="text-white text-[17px] hover:text-[#e67e22]">Register</a> */}
             </ul>
