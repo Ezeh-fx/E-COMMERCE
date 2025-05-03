@@ -13,6 +13,7 @@ import ForgotPassword from "../pages/ForgetPassword";
 import ResetPassword from "../pages/ResetPassword";
 import Product from "../pages/Product";
 import Contact from "../pages/Contact";
+import Cart from "../pages/Cart";
 
 const mainRoute = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const mainRoute = createBrowserRouter([
       {
         path: "/contact",
         element: <Contact />
+      },
+      {
+        path: "/cart",
+        element : <Cart />
       }
     ],
   },

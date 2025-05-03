@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { GRID3 } from "../components/static/data";
 import { ThreeCircles } from "react-loader-spinner";
+import { Link } from "react-router-dom";  
 
 const Product = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -82,18 +83,20 @@ const Product = () => {
                   <p className="text-[#FFFFFF]">{items.price}</p>
 
                   {/* Purchase Button */}
-                  <button
+             <Link to={"/cart"}>
+             <button
                     className="bg-[#E56623B2] text-white font-bold py-3 px-6 hover:bg-[#e67e22] transition rounded-[15px] 
                   drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] h-[50px] text-[24px] leading-[100%] w-auto"
                   >
                     Add to cart
                   </button>
+             </Link>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      )}
+      )}  
     </div>
   );
 };
