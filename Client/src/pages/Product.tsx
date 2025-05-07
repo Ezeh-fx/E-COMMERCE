@@ -33,69 +33,58 @@ const Product = () => {
         </div>
       ) : (
         <div className="w-full bg-[#0D0B1E] py-10 min-h-screen text-white px-4">
-          {/* ✅ Category Filter Buttons */}
-          <div className="flex flex-wrap justify-center gap-3 mx-auto mb-10 max-w-7xl">
-            {categories.map((category, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-5 py-2 rounded-full border-2 text-sm font-semibold transition-all
-                ${
-                  selectedCategory === category
-                    ? "bg-[#e67e22] border-[#e67e22] text-black"
-                    : "border-white hover:bg-white hover:text-black"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          {/* ✅ Product Grid (your original layout) */}
-          <div className="grid w-full h-auto lg:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 grid-cols-4 place-items-center bg-[#0D0B1E] py-5 gap-y-10">
-            {filteredProducts.map((items, i) => (
+        {/* ✅ Category Filter Buttons */}
+        <div className="flex flex-wrap justify-center gap-3 mx-auto mb-10 max-w-7xl">
+          {categories.map((category, idx) => (
+            <button
+              key={idx}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-5 py-2 rounded-full border-2 text-sm font-semibold transition-all
+              ${
+                selectedCategory === category
+                  ? "bg-[#e67e22] border-[#e67e22] text-black"
+                  : "border-white hover:bg-white hover:text-black"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      
+        {/* ✅ Product Grid - Restyled */}
+        <section className="flex flex-col items-center gap-[60px]">
+      
+          <div className="grid w-full grid-cols-4 gap-6 px-4 tablet:grid-cols-2 mobile:grid-cols-1">
+            {filteredProducts.map((item, i) => (
               <div
                 key={i}
-                className="w-[90%] h-[90%] shadow-[rgba(0,0,0,0.24)_0px_3px_8px] gap-5 flex flex-col mb-10 mt-5"
+                className="w-full bg-[#1c1a32] p-4 rounded-lg flex flex-col gap-3 shadow-[rgba(0,0,0,0.24)_0px_3px_8px]"
               >
                 {/* Product Image */}
-                <div>
-                  <img
-                    src={items.img}
-                    alt={
-                      typeof items.title === "string"
-                        ? items.title
-                        : String(items.title)
-                    }
-                    className="w-full h-auto"
-                  />
-                </div>
-
-                {/* Product Description */}
-                <div>
-                  <p className="font-normal text-[24px] text-[#FFFFFF] leading-[100%]">
-                    {items.title}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between py-2">
-                  {/* Product Price */}
-                  <p className="text-[#FFFFFF]">{items.price}</p>
-
-                  {/* Purchase Button */}
-             <Link to={"/cart"}>
-             <button
-                    className="bg-[#E56623B2] text-white font-bold py-3 px-6 hover:bg-[#e67e22] transition rounded-[15px] 
-                  drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] h-[50px] text-[24px] leading-[100%] w-auto"
-                  >
-                    Add to cart
-                  </button>
-             </Link>
+                <img
+                  src={item.img}
+                  alt={typeof item.title === "string" ? item.title : String(item.title)}
+                  className="object-cover w-full h-auto rounded-md"
+                />
+      
+                {/* Product Title */}
+                <p className="text-white text-[20px]">{item.title}</p>
+      
+                {/* Price and Button */}
+                <div className="flex items-center justify-between">
+                  <p className="text-white">{item.price}</p>
+                  <Link to="/cart">
+                    <button className="bg-[#E56623B2] text-white px-4 py-2 rounded-[10px] hover:bg-[#e67e22] transition-all">
+                      Add to cart
+                    </button>
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
+      </div>
+      
       )}  
     </div>
   );

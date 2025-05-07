@@ -6,10 +6,9 @@ export default {
   ],
   theme: {
     screens: {
-     "tablet": {max : "1007px"},
-     "Laptop": {max : "1008px "},
-     "mobile": {max : "640px"},
-    },
+      tablet: { max: "1007px" },
+      mobile: { max: "640px" },
+    },    
     extend: {},
   },
   plugins: [],

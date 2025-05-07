@@ -34,7 +34,7 @@ const HomePage = () => {
           <div className="w-full h-[87vh] relative overflow-hidden">
             {/* Background Image */}
             <img
-              src={bg}
+              src={bg || "/placeholder.svg"}
               alt="Background"
               className="object-cover w-full h-full"
             />
@@ -45,18 +45,18 @@ const HomePage = () => {
             {/* Overlay Content */}
             <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-white">
               <h1
-                className="mb-4 text-[48px] leading-[100%] font-bold md:text-6xl"
+                className="mb-4 text-[48px] leading-[100%] font-bold tablet:text-[38px] mobile:text-[28px]"
                 style={{ fontFamily: '"Life Savers", cursive' }}
               >
-                Trucks That Don’t Flinch. Deals That Don’t Wait
+                Trucks That Don't Flinch. Deals That Don't Wait
               </h1>
-              <p className="mb-6 text-lg md:text-2xl">
+              <p className="mb-6 text-2xl tablet:text-xl mobile:text-base">
                 Fast, Secure, and Easy Transfers
               </p>
               <Link to={"/product"}>
                 <button
-                  className="bg-[#f39c12] text-white font-bold py-3 px-6  hover:bg-[#e67e22] transition rounded-[24px] bg-[#E56623B2]
- drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] w-[385px] h-[75px] text-[24px] leading-[100%]"
+                  className="bg-[#f39c12] text-white font-bold py-3 px-6 hover:bg-[#e67e22] transition rounded-[24px] bg-[#E56623B2]
+ drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] w-[385px] h-[75px] text-[24px] leading-[100%] tablet:w-[300px] tablet:h-[60px] tablet:text-[20px] mobile:w-[240px] mobile:h-[50px] mobile:text-[18px] mobile:py-2"
                 >
                   Veiw Product
                 </button>
@@ -64,108 +64,100 @@ const HomePage = () => {
             </div>
           </div>
 
-          {/* Display Hot Product */}
-          <div className="flex flex-col gap-[150px]">
-            <h1 className="text-[40px] font-bold text-center text-white mt-10">
-              Hot Products
-            </h1>
-            <div className=" w-full h-[500px]  grid grid-cols-4  place-items-center ">
-              {GRID1.map((items, i) => (
-                <div
-                  key={i}
-                  className="w-[90%] h-[100%] shadow-[rgba(0,0,0,0.24)_0px_3px_8px] gap-5 flex flex-col"
-                >
-                  {/* Product Image*/}
-                  <div>
-                    <img src={items.img} alt="" />
-                  </div>
-
-                  {/* Product Discription */}
-                  <div>
-                    <p className="font-normal text-[24px] text-[#FFFFFF] leading-[100%]">
-                      {items.title}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between py-2">
-                    {/* Product Price */}
-                    <p className="text-[#FFFFFF]">{items.price}</p>
-
-                    {/* Purchase Button */}
-                    <button
-                      className="bg-[#E56623B2] text-white font-bold py-3 px-6  hover:bg-[#e67e22] transition rounded-[15px] 
-  drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)]  h-[50px] text-[24px] leading-[100%] w-auto"
-                    >
-                      Add to cart
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Hot Products Section - Improved for mobile */}
+<section className="flex flex-col items-center gap-[60px] mt-10 tablet:gap-[40px] mobile:gap-[30px] px-4 tablet:px-3 mobile:px-2">
+  <h1 className="text-[40px] font-bold text-center text-white tablet:text-[36px] mobile:text-[30px]">Hot Products</h1>
+  
+  {/* Improved Grid Layout */}
+  <div className="grid w-full grid-cols-4 gap-6 mobile:grid-cols-1 mobile:gap-6 tablet:grid-cols-2 tablet:gap-4  mobile:w-[90%] tablet:w-[90%]">
+    {GRID1.map((item, i) => (
+      <div 
+        key={i} 
+        className="w-full bg-[#1c1a32] rounded-lg flex flex-col gap-3 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#2a2845]"
+      >
+        {/* Image container with fixed aspect ratio */}
+        <div className="w-full pt-[75%] relative">
+          <img 
+            src={item.img || "/placeholder.svg"} 
+            alt={typeof item.title === "string" ? item.title : ""} 
+            className="absolute top-0 left-0 object-cover w-full h-full"
+          />
+        </div>
+        
+        {/* Content container with consistent padding */}
+        <div className="flex flex-col flex-grow gap-3 p-4">
+          <p className="text-white text-[20px] tablet:text-[18px] mobile:text-[18px] font-medium line-clamp-2 min-h-[56px] mobile:min-h-[50px]">{item.title}</p>
+          
+          <div className="flex items-center justify-between mt-auto">
+            <p className="text-white text-[18px] tablet:text-[16px] mobile:text-[16px] font-bold">{item.price}</p>
+            <button className="bg-[#E56623B2] text-white px-4 py-2 mobile:px-3 mobile:py-1.5 rounded-[10px] hover:bg-[#e67e22] transition-colors duration-300 text-sm mobile:text-sm whitespace-nowrap">
+              Add to cart
+            </button>
           </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
 
-          {/* Displat Least Product */}
-          <div className="flex flex-col gap-[150px] mt-10">
-            <h1 className="text-[40px] font-bold text-center text-white mt-10">
-              Least Products
-            </h1>
-            <div className="grid w-full h-auto grid-cols-4 place-items-center">
-              {GRID2.map((items, i) => (
-                <div
-                  key={i}
-                  className="w-[90%] h-[90%] shadow-[rgba(0,0,0,0.24)_0px_3px_8px] gap-5 flex flex-col mb-20 mt-5"
-                >
-                  {/* Product Image*/}
-                  <div>
-                    <img src={items.img} alt="" />
-                  </div>
-
-                  {/* Product Discription */}
-                  <div>
-                    <p className="font-normal text-[24px] text-[#FFFFFF] leading-[100%]">
-                      {items.title}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between py-2">
-                    {/* Product Price */}
-                    <p className="text-[#FFFFFF]">{items.price}</p>
-
-                    {/* Purchase Button */}
-                    <button
-                      className="bg-[#E56623B2] text-white font-bold py-3 px-6  hover:bg-[#e67e22] transition rounded-[15px] 
-  drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)]  h-[50px] text-[24px] leading-[100%] w-auto"
-                    >
-                      Add to cart
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+{/* Least Products Section - Improved for mobile */}
+<section className="flex flex-col items-center gap-[60px] mt-20 tablet:gap-[40px] tablet:mt-16 mobile:gap-[30px] mobile:mt-12 px-4 tablet:px-3 mobile:px-2">
+  <h1 className="text-[40px] font-bold text-center text-white tablet:text-[36px] mobile:text-[30px]">Least Products</h1>
+  
+  {/* Improved Grid Layout */}
+  <div className="grid w-full grid-cols-4 gap-6 tablet:grid-cols-2 tablet:gap-4 mobile:grid-cols-1 mobile:gap-6  mobile:w-[90%] tablet:w-[90%]">
+    {GRID2.map((item, i) => (
+      <div 
+        key={i} 
+        className="w-full bg-[#1c1a32] rounded-lg flex flex-col gap-3 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#2a2845]"
+      >
+        {/* Image container with fixed aspect ratio */}
+        <div className="w-full pt-[75%] relative">
+          <img 
+            src={item.img || "/placeholder.svg"} 
+            alt={typeof item.title === "string" ? item.title : ""} 
+            className="absolute top-0 left-0 object-cover w-full h-full"
+          />
+        </div>
+        
+        {/* Content container with consistent padding */}
+        <div className="flex flex-col flex-grow gap-3 p-4">
+          <p className="text-white text-[20px] tablet:text-[18px] mobile:text-[18px] font-medium line-clamp-2 min-h-[56px] mobile:min-h-[50px]">{item.title}</p>
+          
+          <div className="flex items-center justify-between mt-auto">
+            <p className="text-white text-[18px] tablet:text-[16px] mobile:text-[16px] font-bold">{item.price}</p>
+            <button className="bg-[#E56623B2] text-white px-4 py-2 mobile:px-3 mobile:py-1.5 rounded-[10px] hover:bg-[#e67e22] transition-colors duration-300 text-sm mobile:text-sm whitespace-nowrap">
+              Add to cart
+            </button>
           </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
 
           {/* About Us */}
           <div
-            className="flex flex-col items-center justify-center w-full h-auto gap-10 px-5 mt-20"
+            className="flex flex-col items-center justify-center w-full h-auto gap-10 px-6 mt-20 tablet:px-5 mobile:px-4 tablet:mt-16 mobile:mt-12 tablet:gap-8 mobile:gap-6"
             id="about"
           >
             {/* Heading */}
-            <h1 className="text-[40px] font-bold text-center text-white mt-10">
+            <h1 className="text-[40px] font-bold text-center text-white mt-10 tablet:text-[32px] mobile:text-[28px] tablet:mt-8 mobile:mt-6">
               About Us
             </h1>
 
             {/* About Image/Text */}
-            <div className="flex w-full gap-5  h-[420px] mt-20 justify-around">
+            <div className="flex w-full gap-5 h-[420px] mt-20 tablet:mt-12 mobile:mt-8 justify-around tablet:flex-col tablet:h-auto">
               {/* Image */}
               <img
-                src={about}
+                src={about || "/placeholder.svg"}
                 alt=""
-                className="w-[627px] h-full object-cover"
+                className="w-[627px] h-full object-cover tablet:w-full tablet:h-auto"
               />
 
               {/* Text */}
-              <div className="w-[50%] h-[100%]  flex justify-center items-center">
-                <p className="text-[32px] font-normal leading-[100%] text-white">
+              <div className="w-[50%] h-[100%] flex justify-center items-center tablet:w-full tablet:h-auto tablet:mt-6">
+                <p className="text-[32px] font-normal leading-[100%] text-white tablet:text-[24px] mobile:text-[18px] tablet:leading-relaxed">
                   Yorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
                   vulputate libero et velit interdum, ac aliquet odio mattis.
                   Class aptent taciti sociosqu ad litora torquent per conubia
@@ -177,7 +169,7 @@ const HomePage = () => {
               </div>
             </div>
 
-            <p className="text-white">
+            <p className="text-white tablet:text-[15px] mobile:text-[14px] leading-relaxed">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
               vulputate libero et velit interdum, ac aliquet odio mattis. Class
               aptent taciti sociosqu ad litora torquent per conubia nostra, per
@@ -192,7 +184,7 @@ const HomePage = () => {
               vestibulum eu nisl.
             </p>
 
-            <p className="text-white">
+            <p className="text-white tablet:text-[15px] mobile:text-[14px] leading-relaxed">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
               vulputate libero et velit interdum, ac aliquet odio mattis. Class
               aptent taciti sociosqu ad litora torquent per conubia nostra, per
@@ -210,32 +202,32 @@ const HomePage = () => {
 
           {/* Contact us */}
           <div
-            className="flex flex-col items-center justify-center w-full h-auto gap-10 mt-20"
+            className="flex flex-col items-center justify-center w-full h-auto gap-10 mt-20 tablet:mt-16 mobile:mt-12 tablet:gap-8 mobile:gap-6"
             id="contact"
           >
-            <h1 className="text-[40px] font-bold text-center text-white mt-10">
+            <h1 className="text-[40px] font-bold text-center text-white mt-10 tablet:text-[32px] mobile:text-[28px] tablet:mt-8 mobile:mt-6">
               Contact us
             </h1>
 
-            <div className="flex items-center justify-around w-full h-auto ">
-              <img src={contact} alt="" className="w-[40%] " />
+            <div className="flex items-center justify-around w-full h-auto px-6 tablet:px-5 mobile:px-4 tablet:flex-col">
+              <img src={contact || "/placeholder.svg"} alt="" className="w-[40%] tablet:w-full" />
 
-              <div className="w-auto h-full font-normal text-[32px] leading-[100%] text-white flex flex-col gap-5">
+              <div className="w-auto h-full font-normal text-[32px] leading-[100%] text-white flex flex-col gap-5 tablet:w-full tablet:mt-8 mobile:mt-6 tablet:text-[26px] mobile:text-[20px] tablet:gap-4 mobile:gap-3 tablet:leading-relaxed">
                 <span>Info at quickcart@gmail.com</span>
                 <span>tele: +23490000000011</span>
 
                 <div className="flex items-center gap-2">
-                  <FaFacebook />
+                  <FaFacebook className="tablet:text-[22px] mobile:text-[18px]" />
                   <p>@quickcart</p>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <BsTwitterX />
+                  <BsTwitterX className="tablet:text-[22px] mobile:text-[18px]" />
                   <p>@quickcart</p>
                 </div>
 
-                <p className="text-[20px] flex justify-center items-center gap-1">
-                  Want to message us click <IoIosArrowRoundForward size={30} />
+                <p className="text-[20px] flex justify-center items-center gap-1 tablet:text-[18px] mobile:text-[16px]">
+                  Want to message us click <IoIosArrowRoundForward size={30} className="tablet:w-6 tablet:h-6 mobile:w-5 mobile:h-5" />
                   <Link to={"/contact"}>
                     <span className="text-[#E67E25] cursor-pointer hover:underline">
                       Contact Us
