@@ -39,17 +39,14 @@ const ContactUs = () => {
     const mailtoLink = `mailto:emekaezeh2009@gmail.com?subject=${subject}&body=${body}`;
 
     window.location.href = mailtoLink;
-
-    // Show success popup
     setSuccess(true);
-    reset(); // Clear the inputs
+    reset();
 
-    // Hide the popup after 3 seconds
     setTimeout(() => setSuccess(false), 3000);
   };
 
   return (
-    <div className="w-full bg-[#0D0B1E] min-h-screen text-white relative">
+    <div className="w-full min-h-screen bg-[#0D0B1E] text-white relative">
       {loading ? (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1c1a32]">
           <ThreeCircles
@@ -62,17 +59,21 @@ const ContactUs = () => {
           <p className="mt-3 text-lg font-medium text-[#e67e22]">Loading...</p>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center px-4 py-12">
+        <div className="flex flex-col items-center justify-center px-6 py-16 tablet:px-8 mobile:px-4">
           <header className="mb-10 text-center">
-            <h1 className="mb-2 text-4xl font-bold">Contact Us</h1>
-            <p className="text-gray-300">We’d love to hear from you!</p>
+            <h1 className="mb-3 text-4xl font-bold tablet:text-3xl mobile:text-2xl">
+              Contact Us
+            </h1>
+            <p className="text-lg text-gray-300 tablet:text-base mobile:text-sm">
+              We’d love to hear from you!
+            </p>
           </header>
 
           <form
             onSubmit={handleSubmit(handleSendEmail)}
-            className="bg-[#1c1a32] w-full max-w-md p-8 rounded-lg shadow-md"
+            className="bg-[#1c1a32] w-full max-w-lg p-8 rounded-xl shadow-md tablet:p-6 mobile:p-4"
           >
-            <label htmlFor="name" className="block mb-2 font-semibold">
+            <label htmlFor="name" className="block mb-2 text-sm font-semibold">
               Your Name
             </label>
             <input
@@ -80,7 +81,7 @@ const ContactUs = () => {
               type="text"
               {...register("name")}
               placeholder="John Doe"
-              className="w-full p-3 mb-2 rounded-md bg-[#29274c] text-white border-none"
+              className="w-full p-3 mb-2 rounded-md bg-[#29274c] text-white border-none focus:outline-none text-sm"
             />
             {errors.name && (
               <p className="mb-4 text-xs text-red-500">
@@ -88,7 +89,7 @@ const ContactUs = () => {
               </p>
             )}
 
-            <label htmlFor="message" className="block mb-2 font-semibold">
+            <label htmlFor="message" className="block mb-2 text-sm font-semibold">
               Your Message
             </label>
             <textarea
@@ -96,7 +97,7 @@ const ContactUs = () => {
               {...register("message")}
               placeholder="Type your message here..."
               rows={6}
-              className="w-full p-3 mb-2 rounded-md bg-[#29274c] text-white border-none"
+              className="w-full p-3 mb-2 rounded-md bg-[#29274c] text-white border-none focus:outline-none text-sm"
             />
             {errors.message && (
               <p className="mb-4 text-xs text-red-500">
@@ -106,15 +107,14 @@ const ContactUs = () => {
 
             <button
               type="submit"
-              className="w-full py-3 bg-[#f39c12] text-black font-bold rounded-lg hover:bg-[#e67e22] transition"
+              className="w-full py-3 bg-[#f39c12] text-black font-bold rounded-lg hover:bg-[#e67e22] transition text-base"
             >
               Send Message
             </button>
           </form>
 
-          {/* ✅ Success Popup */}
           {success && (
-            <div className="fixed z-50 px-6 py-3 text-white bg-green-500 rounded-lg shadow-lg bottom-6 right-6 animate-bounce">
+            <div className="fixed z-50 px-6 py-3 text-white bg-green-500 rounded-lg shadow-lg bottom-6 right-6 animate-bounce mobile:bottom-4 mobile:right-4 mobile:text-sm">
               Message sent successfully!
             </div>
           )}

@@ -2,24 +2,26 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../../components/static/Sidebar";
 import Header from "./DashBoardHeader";
 
-const AdminDashBoard = () => {
+const AdminDashboard = () => {
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <Sidebar />
+      {/* Always-visible Sidebar (desktop only layout) */}
+      <div className="w-64 text-white bg-blue-800">
+        <Sidebar />
+      </div>
 
-      {/* Main Content */}
-      <div className="flex flex-col flex-1">
-        {/* Header */}
+      {/* Main content area */}
+      <div className="flex flex-col flex-1 overflow-y-auto">
+        {/* Fixed Header */}
         <Header />
-        
-        {/* Pages inside Admin Dashboard */}
-        <div className="p-6">
+
+        {/* Page content (add pt-20 to match header height) */}
+        <main className="p-4 pt-20 sm:p-6 md:p-8">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );
 };
 
-export default AdminDashBoard;
+export default AdminDashboard;

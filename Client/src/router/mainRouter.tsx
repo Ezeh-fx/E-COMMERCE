@@ -14,6 +14,10 @@ import ResetPassword from "../pages/ResetPassword";
 import Product from "../pages/Product";
 import Contact from "../pages/Contact";
 import Cart from "../pages/Cart";
+import Order from "../pages/Order";
+import AddProductModal from "../pages/DashBoard/AddProductModal";
+import User from "../pages/DashBoard/User";
+import Settings from "../pages/DashBoard/Setting";
 
 const mainRoute = createBrowserRouter([
   {
@@ -35,6 +39,10 @@ const mainRoute = createBrowserRouter([
       {
         path: "/cart",
         element : <Cart />
+      }, 
+      {
+        path: "/order",
+        element: <Order />,
       }
     ],
   },
@@ -53,6 +61,18 @@ const mainRoute = createBrowserRouter([
       {
         path: "/admin/orders",
         element: <Orders />,
+      },
+      {
+        path: "/admin/users",
+        element: <User />,
+      },
+      {
+        path: "/admin/settings",
+        element: <Settings />,
+      },
+      {
+        path: "/admin/products",
+        element: <AddProductModal isOpen={true} onClose={() => {}} onAddProduct={(product) => { console.log(product); }} />,
       },
     ],
   },

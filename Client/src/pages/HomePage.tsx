@@ -9,12 +9,21 @@ import { FaFacebook } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 2000);
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 2000);
+    AOS.init({ duration: 1000, once: true }); // ✅ Initialize scroll animation
+  }, []);
+  
   return (
     <div className="w-full bg-[#0D0B1E]">
       {loading ? (
@@ -73,6 +82,7 @@ const HomePage = () => {
     {GRID1.map((item, i) => (
       <div 
         key={i} 
+        data-aos="fade-up" // ✅ Animation added here
         className="w-full bg-[#1c1a32] rounded-lg flex flex-col gap-3 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#2a2845]"
       >
         {/* Image container with fixed aspect ratio */}
@@ -109,6 +119,7 @@ const HomePage = () => {
     {GRID2.map((item, i) => (
       <div 
         key={i} 
+        data-aos="fade-up" // ✅ Animation added here
         className="w-full bg-[#1c1a32] rounded-lg flex flex-col gap-3 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#2a2845]"
       >
         {/* Image container with fixed aspect ratio */}
@@ -226,7 +237,7 @@ const HomePage = () => {
                   <p>@quickcart</p>
                 </div>
 
-                <p className="text-[20px] flex justify-center items-center gap-1 tablet:text-[18px] mobile:text-[16px]">
+                <p className="text-[20px] flex justify-center items-center gap-1 tablet:text-[18px] mobile:text-[16px] mobile:mb-5 tablet:mb-5">
                   Want to message us click <IoIosArrowRoundForward size={30} className="tablet:w-6 tablet:h-6 mobile:w-5 mobile:h-5" />
                   <Link to={"/contact"}>
                     <span className="text-[#E67E25] cursor-pointer hover:underline">

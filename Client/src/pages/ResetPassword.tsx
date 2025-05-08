@@ -20,7 +20,7 @@ const ResetPassword = () => {
     width: string;
   }>({ text: "", color: "text-gray-400", width: "w-0" });
   const [showStrengthBar, setShowStrengthBar] = useState(false); // Hide initially
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const getPasswordStrength = (password: string) => {
     let strength = {
@@ -71,7 +71,6 @@ const ResetPassword = () => {
   // Form Hook
   const {
     register,
-    // handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -143,9 +142,9 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="w-full h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] mobile:items-center mobile:justify-center mobile:h-auto">
+    <div className="w-full min-h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] items-center justify-center">
       {/* Left Image Panel */}
-      <div className="relative w-1/2 bg-white mobile:hidden tablet:hidden">
+      <div className="relative hidden w-1/2 bg-white lg:block">
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
         <img
           src={img}
@@ -155,8 +154,8 @@ const ResetPassword = () => {
       </div>
 
       {/* Form Section */}
-      <div className="flex flex-col items-center justify-center w-1/2 h-full mobile:w-full mobile:h-screen tablet:w-full">
-        <div className="flex flex-col items-center justify-center w-full h-full mobile:px-4">
+      <div className="flex flex-col items-center justify-center w-full h-full px-4 py-6 lg:w-1/2">
+        <div className="flex flex-col items-center justify-center w-full gap-4">
           <h1 className="mb-10 text-3xl font-bold text-white">{step === "otp" ? "Verify OTP" : "Reset Password"}</h1>
 
           {step === "otp" ? (
@@ -166,109 +165,108 @@ const ResetPassword = () => {
                 value={otp}
                 onChange={handleChange}
                 placeholder="Enter 6-digit code"
-                className="w-[70%] p-2 bg-white border rounded-md focus:outline-none h-[60px]"
+                className="w-full sm:w-4/5 lg:w-1/2 p-2 bg-white border rounded-md focus:outline-none h-[60px]"
               />
               <button
                 onClick={handleVerifyOtp}
-                className="w-[550px] p-2 my-2 font-semibold text-white bg-[#e67e22] rounded-md outline-none h-[60px]"
+                className="w-full sm:w-4/5 lg:w-1/2 p-2 my-2 font-semibold text-white bg-[#e67e22] rounded-md outline-none h-[60px]"
               >
                 Verify OTP
               </button>
             </div>
           ) : (
             <>
-            {/* Password Field */}
-            <div className="w-[70%] mb-6">
-              <label htmlFor="password" className="block mb-1 font-bold text-white">
-                Password
-              </label>
-          
-              <div className="flex items-center w-full h-[50px] px-2 bg-white rounded-md shadow-sm">
-                <input
-                  id="password"
-                  type={show ? "text" : "password"}
-                  placeholder="Enter password"
-                  {...register("password")}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                    handlePasswordChange(e);
-                  }}
-                  className="w-full h-full p-2 text-black bg-white outline-none"
-                />
-                <div onClick={toggle} className="ml-2 cursor-pointer">
-                  {show ? (
-                    <IoEyeOffSharp size={22} className="text-gray-500" />
-                  ) : (
-                    <IoEyeOutline size={22} className="text-gray-500" />
-                  )}
-                </div>
-              </div>
-          
-              {/* Password Strength Bar */}
-              {showStrengthBar && (
-                <>
-                  <div className="w-full h-2 mt-2 overflow-hidden bg-gray-300 rounded-full">
-                    <div
-                      className={`h-full transition-all duration-500 ${passwordStrength.width}`}
-                    ></div>
+              {/* Password Field */}
+              <div className="w-full mb-6 sm:w-4/5 lg:w-1/2">
+                <label htmlFor="password" className="block mb-1 font-bold text-white">
+                  Password
+                </label>
+
+                <div className="flex items-center w-full h-[50px] px-2 bg-white rounded-md shadow-sm">
+                  <input
+                    id="password"
+                    type={show ? "text" : "password"}
+                    placeholder="Enter password"
+                    {...register("password")}
+                    onChange={(e) => {
+                      setNewPassword(e.target.value);
+                      handlePasswordChange(e);
+                    }}
+                    className="w-full h-full p-2 text-black bg-white outline-none"
+                  />
+                  <div onClick={toggle} className="ml-2 cursor-pointer">
+                    {show ? (
+                      <IoEyeOffSharp size={22} className="text-gray-500" />
+                    ) : (
+                      <IoEyeOutline size={22} className="text-gray-500" />
+                    )}
                   </div>
-                  <p className={`mt-1 text-sm font-semibold ${passwordStrength.color}`}>
-                    {passwordStrength.text}
-                  </p>
-                </>
-              )}
-          
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
-              )}
-            </div>
-          
-            {/* Confirm Password Field */}
-            <div className="w-[70%] mb-6">
-              <label htmlFor="confirmPassword" className="block mb-1 font-bold text-white">
-                Confirm Password
-              </label>
-          
-              <div className="flex items-center w-full h-[50px] px-2 bg-white rounded-md shadow-sm">
-                <input
-                  id="confirmPassword"
-                  type={show ? "text" : "password"}
-                  placeholder="Confirm password"
-                  {...register("confirmPassword")}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full h-full p-2 text-black bg-white outline-none"
-                />
-                <div onClick={toggle} className="ml-2 cursor-pointer">
-                  {show ? (
-                    <IoEyeOffSharp size={22} className="text-gray-500" />
-                  ) : (
-                    <IoEyeOutline size={22} className="text-gray-500" />
-                  )}
                 </div>
+
+                {/* Password Strength Bar */}
+                {showStrengthBar && (
+                  <>
+                    <div className="w-full h-2 mt-2 overflow-hidden bg-gray-300 rounded-full">
+                      <div
+                        className={`h-full transition-all duration-500 ${passwordStrength.width}`}
+                      ></div>
+                    </div>
+                    <p className={`mt-1 text-sm font-semibold ${passwordStrength.color}`}>
+                      {passwordStrength.text}
+                    </p>
+                  </>
+                )}
+
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+                )}
               </div>
-          
-              {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-          
-            {/* Submit Button */}
-            <button
-              type="submit"
-              onClick={handleResetPassword}
-              className="w-[550px] p-2 my-2 font-semibold text-white bg-[#e67e22] rounded-md outline-none h-[60px]"
-            >
-              Reset Password
-            </button>
-          </>
-          
+
+              {/* Confirm Password Field */}
+              <div className="w-full mb-6 sm:w-4/5 lg:w-1/2">
+                <label htmlFor="confirmPassword" className="block mb-1 font-bold text-white">
+                  Confirm Password
+                </label>
+
+                <div className="flex items-center w-full h-[50px] px-2 bg-white rounded-md shadow-sm">
+                  <input
+                    id="confirmPassword"
+                    type={show ? "text" : "password"}
+                    placeholder="Confirm password"
+                    {...register("confirmPassword")}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full h-full p-2 text-black bg-white outline-none"
+                  />
+                  <div onClick={toggle} className="ml-2 cursor-pointer">
+                    {show ? (
+                      <IoEyeOffSharp size={22} className="text-gray-500" />
+                    ) : (
+                      <IoEyeOutline size={22} className="text-gray-500" />
+                    )}
+                  </div>
+                </div>
+
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                onClick={handleResetPassword}
+                className="w-full sm:w-4/5 lg:w-1/2 p-2 my-2 font-semibold text-white bg-[#e67e22] rounded-md outline-none h-[60px]"
+              >
+                Reset Password
+              </button>
+            </>
           )}
         </div>
       </div>
     </div>
   );
+};
 
-}
 export default ResetPassword;
