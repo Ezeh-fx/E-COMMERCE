@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { ThreeCircles } from "react-loader-spinner";
 import bg from "../assets/bg_img.png";
-import { GRID1 } from "../components/static/data";
-import { GRID2 } from "../components/static/data";
+import { GRID1 } from "../components/data/data";
+import { GRID2 } from "../components/data/data";
 import about from "../assets/About.png";
 import contact from "../assets/Contact.png";
 import { FaFacebook } from "react-icons/fa";

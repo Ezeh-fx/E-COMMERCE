@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { GRID3 } from "../components/static/data";
+import { GRID3 } from "../components/data/data";
 import { ThreeCircles } from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import AOS from "aos";
