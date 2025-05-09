@@ -1,40 +1,59 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-interface AddProductModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onAddProduct: (product: { id: number; name: string; category: string; price: number; stock: number }) => void
+interface Product {
+  id: number
+  name: string
+  category: string
+  price: number
+  stock: number
 }
 
-const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAddProduct }) => {
-  const [newProduct, setNewProduct] = useState({
-    name: "",
-    category: "",
-    price: "",
-    stock: "",
+interface EditProductModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onSaveProduct: (product: Product) => void
+  product: Product
+}
+
+const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, onSaveProduct, product }) => {
+  const [editedProduct, setEditedProduct] = useState({
+    id: product.id,
+    name: product.name,
+    category: product.category,
+    price: product.price.toString(),
+    stock: product.stock.toString(),
   })
+
+  // Update form when product changes
+  useEffect(() => {
+    setEditedProduct({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price.toString(),
+      stock: product.stock.toString(),
+    })
+  }, [product])
 
   const handleSubmit = () => {
     // Basic validation
-    if (!newProduct.name || !newProduct.category || !newProduct.price || !newProduct.stock) {
+    if (!editedProduct.name || !editedProduct.category || !editedProduct.price || !editedProduct.stock) {
       alert("Please fill in all fields")
       return
     }
 
-    const productToAdd = {
-      id: Date.now(), // Temporary ID
-      name: newProduct.name,
-      category: newProduct.category,
-      price: Number.parseFloat(newProduct.price),
-      stock: Number.parseInt(newProduct.stock),
+    const updatedProduct = {
+      id: editedProduct.id,
+      name: editedProduct.name,
+      category: editedProduct.category,
+      price: Number.parseFloat(editedProduct.price),
+      stock: Number.parseInt(editedProduct.stock),
     }
 
-    onAddProduct(productToAdd)
-    setNewProduct({ name: "", category: "", price: "", stock: "" })
-    onClose()
+    onSaveProduct(updatedProduct)
   }
 
   if (!isOpen) return null
@@ -42,7 +61,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
       <div className="w-full max-w-md p-6 mobile:p-4 bg-white rounded-lg max-h-[90vh] overflow-y-auto">
-        <h2 className="mb-4 text-xl font-semibold">Add New Product</h2>
+        <h2 className="mb-4 text-xl font-semibold">Edit Product</h2>
 
         <div className="space-y-4">
           <div>
@@ -50,8 +69,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             <input
               type="text"
               className="w-full px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={newProduct.name}
-              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+              value={editedProduct.name}
+              onChange={(e) => setEditedProduct({ ...editedProduct, name: e.target.value })}
             />
           </div>
 
@@ -59,8 +78,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             <label className="block mb-2 text-gray-700">Category</label>
             <select
               className="w-full px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={newProduct.category}
-              onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+              value={editedProduct.category}
+              onChange={(e) => setEditedProduct({ ...editedProduct, category: e.target.value })}
             >
               <option value="">Select category</option>
               <option value="Electronics">Electronics</option>
@@ -75,8 +94,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             <input
               type="number"
               className="w-full px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={newProduct.price}
-              onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+              value={editedProduct.price}
+              onChange={(e) => setEditedProduct({ ...editedProduct, price: e.target.value })}
             />
           </div>
 
@@ -85,8 +104,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             <input
               type="number"
               className="w-full px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={newProduct.stock}
-              onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
+              value={editedProduct.stock}
+              onChange={(e) => setEditedProduct({ ...editedProduct, stock: e.target.value })}
             />
           </div>
         </div>
@@ -102,7 +121,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             onClick={handleSubmit}
             className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 mobile:w-full mobile:order-1 mobile:mb-2"
           >
-            Add Product
+            Save Changes
           </button>
         </div>
       </div>
@@ -110,4 +129,4 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
   )
 }
 
-export default AddProductModal
+export default EditProductModal

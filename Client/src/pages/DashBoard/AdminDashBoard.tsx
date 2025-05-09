@@ -1,22 +1,33 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../../components/static/Sidebar";
-import Header from "./DashBoardHeader";
+import DashBoardHeader from "../DashBoard/DashBoardHeader";
 
 const AdminDashboard = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Always-visible Sidebar (desktop only layout) */}
-      <div className="w-64 text-white bg-blue-800">
-        <Sidebar />
+      {/* Sidebar */}
+      <div
+        className={`fixed inset-y-0 left-0 z-30 w-64 bg-gray-800 transform transition-transform duration-300
+        ${isSidebarOpen ? "translate-x-0" : "tablet:-translate-x-full "}`}
+      >
+        <Sidebar closeSidebar={() => setIsSidebarOpen(false)} />
       </div>
 
-      {/* Main content area */}
-      <div className="flex flex-col flex-1 overflow-y-auto">
-        {/* Fixed Header */}
-        <Header />
+      {/* Overlay when sidebar is open */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 z-20 bg-black bg-opacity-50 tablet:block"
+        />
+      )}
 
-        {/* Page content (add pt-20 to match header height) */}
-        <main className="p-4 pt-20 sm:p-6 md:p-8">
+      {/* Main content */}
+      <div className="flex flex-col flex-1 ml-64 tablet:ml-0">
+        <DashBoardHeader toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+        <main className="p-4 pt-20">
           <Outlet />
         </main>
       </div>
