@@ -30,8 +30,8 @@ ProductRoute.route("/get/:category").get(getProductByCategory);
 ProductRoute.route("/getone/:productId").get(getOneProduct);
 ProductRoute.route("/get").get(GetAllProduct);
 ProductRoute.route("/search").get(FindProductBySearch);
-ProductRoute.route("/update_product/productId").patch(updateProduct);
+ProductRoute.route("/update_product/:productId").patch(updateProduct);
 ProductRoute.route("/update_productImage").patch(updateProductImage);
-ProductRoute.route("/delete_product").delete(DeleteProduct);
+ProductRoute.route("/delete_product/:productId").delete(DeleteProduct);
 
 export default ProductRoute;

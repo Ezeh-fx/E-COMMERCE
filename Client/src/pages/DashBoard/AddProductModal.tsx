@@ -26,7 +26,6 @@ interface AddProductModalProps {
 const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useDispatch()
   const token = useSelector((state: RootState) => state.user.user?.token)
-  console.log("Token", token)
 
   const [newProduct, setNewProduct] = useState({
     name: "",

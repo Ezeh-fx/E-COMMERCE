@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 export interface UserType {
-  token: string
+  token: string,
   // Add any other user properties here
 }
 

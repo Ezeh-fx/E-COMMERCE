@@ -7,7 +7,7 @@ import { updateProduct as updateProductApi } from "../../Api/ProductApi/ProductA
 import { updateProduct as updateProductRedux } from "../../global/productReducer"
 
 interface Product {
-  id: string
+  _id: string
   name: string
   category: string
   price: number
@@ -22,7 +22,7 @@ interface EditProductModalProps {
 
 const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, product }) => {
   const [editedProduct, setEditedProduct] = useState({
-    id: product.id,
+    id: product._id,
     name: product.name,
     category: product.category,
     price: product.price.toString(),
@@ -34,7 +34,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, pr
 
   useEffect(() => {
     setEditedProduct({
-      id: product.id,
+      id: product._id,
       name: product.name,
       category: product.category,
       price: product.price.toString(),
@@ -59,7 +59,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, pr
       setLoading(true)
       await updateProductApi(editedProduct.id, updatedProductData)
 
-      dispatch(updateProductRedux({ id: parseInt(editedProduct.id), ...updatedProductData }))
+      dispatch(updateProductRedux({ _id: editedProduct.id, ...updatedProductData }))
       onClose()
     } catch (err) {
       console.error("Failed to update product", err)
