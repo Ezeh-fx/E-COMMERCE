@@ -2,9 +2,12 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
+import { useDispatch } from "react-redux"
+import { updateProduct as updateProductApi } from "../../Api/ProductApi/ProductApi"
+import { updateProduct as updateProductRedux } from "../../global/productReducer"
 
 interface Product {
-  id: number
+  id: string
   name: string
   category: string
   price: number
@@ -14,11 +17,10 @@ interface Product {
 interface EditProductModalProps {
   isOpen: boolean
   onClose: () => void
-  onSaveProduct: (product: Product) => void
   product: Product
 }
 
-const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, onSaveProduct, product }) => {
+const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, product }) => {
   const [editedProduct, setEditedProduct] = useState({
     id: product.id,
     name: product.name,
@@ -27,7 +29,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, on
     stock: product.stock.toString(),
   })
 
-  // Update form when product changes
+  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     setEditedProduct({
       id: product.id,
@@ -38,22 +42,31 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, on
     })
   }, [product])
 
-  const handleSubmit = () => {
-    // Basic validation
+  const handleSubmit = async () => {
     if (!editedProduct.name || !editedProduct.category || !editedProduct.price || !editedProduct.stock) {
       alert("Please fill in all fields")
       return
     }
 
-    const updatedProduct = {
-      id: editedProduct.id,
+    const updatedProductData = {
       name: editedProduct.name,
       category: editedProduct.category,
-      price: Number.parseFloat(editedProduct.price),
-      stock: Number.parseInt(editedProduct.stock),
+      price: parseFloat(editedProduct.price),
+      stock: parseInt(editedProduct.stock),
     }
 
-    onSaveProduct(updatedProduct)
+    try {
+      setLoading(true)
+      await updateProductApi(editedProduct.id, updatedProductData)
+
+      dispatch(updateProductRedux({ id: parseInt(editedProduct.id), ...updatedProductData }))
+      onClose()
+    } catch (err) {
+      console.error("Failed to update product", err)
+      alert("Failed to update product")
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!isOpen) return null
@@ -119,9 +132,10 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, on
           </button>
           <button
             onClick={handleSubmit}
+            disabled={loading}
             className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 mobile:w-full mobile:order-1 mobile:mb-2"
           >
-            Save Changes
+            {loading ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </div>

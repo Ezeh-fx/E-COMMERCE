@@ -23,13 +23,21 @@ export const getAllProducts = async () => {
 }
 
 export const createProduct = async (formData: FormData, token: string) => {
-  const response =await axios.post("http://localhost:2343/api/product/product", formData, {
+ try {
+  console.log("Token being sent:", token)
+  const response = await axios.post("http://localhost:2343/api/product/product", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
   })
   return response.data
+ }
+  catch (error: unknown) {
+    const axiosError = error as AxiosError
+    console.error("Fetch Products Error:", axiosError.response?.data || axiosError.message)
+    return axiosError.response?.data || { message: "An error occurred" }
+  }
 }
 
 export const updateProduct = async (productId: string, updatedData: Partial<ProductPayload>) => {

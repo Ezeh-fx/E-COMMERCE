@@ -6,25 +6,27 @@ import { useDispatch, useSelector } from "react-redux"
 import { createProduct } from "../../Api/ProductApi/ProductApi"
 import { addProduct } from "../../global/productReducer"
 import { RootState } from "../../global/store"
-import { category } from "../../components/data/data" // adjust path if needed
+import { category } from "../../components/data/data"
 
 export interface ProductPayload {
   name: string
   category: string
   price: number
   stock: number
-  rating?: number
   productImage: string
 }
 
 interface AddProductModalProps {
   isOpen: boolean
   onClose: () => void
+  onAddProduct: (newProduct: ProductPayload) => Promise<void>
+  isSubmitting: boolean
 }
 
 const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useDispatch()
   const token = useSelector((state: RootState) => state.user.user?.token)
+  console.log("Token", token)
 
   const [newProduct, setNewProduct] = useState({
     name: "",
@@ -36,7 +38,13 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose }) =>
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async () => {
-    if (!newProduct.name || !newProduct.category || !newProduct.price || !newProduct.stock || !productImage) {
+    if (
+      !newProduct.name ||
+      !newProduct.category ||
+      !newProduct.price ||
+      !newProduct.stock ||
+      !productImage
+    ) {
       alert("Please fill in all fields and select an image")
       return
     }
@@ -44,9 +52,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose }) =>
     const formData = new FormData()
     formData.append("name", newProduct.name)
     formData.append("category", newProduct.category)
-    formData.append("price", newProduct.price)
-    formData.append("stock", newProduct.stock)
-    formData.append("rating", "0")
+    formData.append("price", String(Number(newProduct.price)))
+    formData.append("stock", String(Number(newProduct.stock)))
     formData.append("productImage", productImage)
 
     setIsSubmitting(true)
@@ -78,7 +85,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose }) =>
             <label className="block mb-2 text-gray-700">Product Name</label>
             <input
               type="text"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={newProduct.name}
               onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
             />
@@ -87,7 +94,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose }) =>
           <div>
             <label className="block mb-2 text-gray-700">Category</label>
             <select
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={newProduct.category}
               onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
             >
@@ -104,7 +111,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose }) =>
             <label className="block mb-2 text-gray-700">Price ($)</label>
             <input
               type="number"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={newProduct.price}
               onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
             />
@@ -114,7 +121,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose }) =>
             <label className="block mb-2 text-gray-700">Stock</label>
             <input
               type="number"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={newProduct.stock}
               onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
             />
