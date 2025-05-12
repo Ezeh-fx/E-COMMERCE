@@ -165,3 +165,15 @@ export const GRID3 = [
         category: "Fuel Transport Truck",
     },
 ];
+
+
+
+export const category = {
+    all: "All",
+    mensWear: "Men's Wear",
+    womensWear: "Women's Wear",
+    electronics: "Electronics",
+    books: "Books",
+    mobilePhones: "Mobile Phones", // fixed typo from "mobliePhones"
+  }
+  

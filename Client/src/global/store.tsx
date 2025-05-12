@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./useReducer"; // Fixed import path
+import productReducer from "./productReducer"
 
 export const store = configureStore({
   reducer: {
     user: userReducer, // Renamed "change" to "user" for clarity
+    products: productReducer,
   },
 });
 

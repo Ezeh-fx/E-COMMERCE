@@ -5,26 +5,37 @@ import { Edit, Trash2, Plus } from "lucide-react"
 import AddProductModal from "./AddProductModal"
 import EditProductModal from "./EditProductModal"
 
-// Mock initial products data
-const initialProducts = [
-  { id: 1, name: "Wireless Headphones", category: "Electronics", price: 89.99, stock: 45 },
-  { id: 2, name: "Smartphone Case", category: "Accessories", price: 19.99, stock: 120 },
-  { id: 3, name: "Cotton T-Shirt", category: "Apparel", price: 24.99, stock: 78 },
-  { id: 4, name: "Smart Speaker", category: "Electronics", price: 129.99, stock: 32 },
-  { id: 5, name: "Desk Lamp", category: "Home", price: 39.99, stock: 54 },
-]
+const categoryOptions = ["All", "Electronics", "Accessories", "Apparel", "Home"]
 
 const Products = () => {
+  const initialProducts = [
+    { id: 1, name: "Wireless Headphones", category: "Electronics", price: 89.99, stock: 45 },
+    { id: 2, name: "Smartphone Case", category: "Accessories", price: 19.99, stock: 120 },
+    { id: 3, name: "Cotton T-Shirt", category: "Apparel", price: 24.99, stock: 78 },
+    { id: 4, name: "Smart Speaker", category: "Electronics", price: 129.99, stock: 32 },
+    { id: 5, name: "Desk Lamp", category: "Home", price: 39.99, stock: 54 },
+  ]
+
   const [products, setProducts] = useState(initialProducts)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [activeCategory, setActiveCategory] = useState("All")
 
-  const handleAddProduct = (product: any) => {
+  interface Product {
+    id: number
+    name: string
+    category: string
+    price: number
+    stock: number
+  }
+
+  const handleAddProduct = (product: Product): void => {
     setProducts([...products, product])
   }
 
-  const handleEditProduct = (product: any) => {
+  const handleEditProduct = (product: Product) => {
     setProducts(products.map((p) => (p.id === product.id ? product : p)))
     setIsEditModalOpen(false)
   }
@@ -35,22 +46,50 @@ const Products = () => {
     }
   }
 
-  const openEditModal = (product: any) => {
+  const openEditModal = (product: Product) => {
     setSelectedProduct(product)
     setIsEditModalOpen(true)
   }
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <h1 className="text-2xl font-semibold">Products</h1>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-        >
-          <Plus size={18} className="mr-2" />
-          <span>Add Product</span>
-        </button>
+
+        <div className="flex flex-wrap items-center gap-3 mobile:flex-col mobile:items-stretch">
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {categoryOptions.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-3 py-1 text-sm rounded-full border transition-colors duration-200 ${
+                  activeCategory === cat
+                    ? "bg-blue-500 text-white"
+                    : "bg-white border-gray-300 text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+          >
+            <Plus size={18} className="mr-2" /> Add Product
+          </button>
+        </div>
       </div>
 
       {/* Desktop view - full table */}
@@ -193,14 +232,12 @@ const Products = () => {
         ))}
       </div>
 
-      {/* Add Product Modal */}
       <AddProductModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddProduct={handleAddProduct}
       />
 
-      {/* Edit Product Modal */}
       {selectedProduct && (
         <EditProductModal
           isOpen={isEditModalOpen}

@@ -42,14 +42,6 @@ const ProductSchema = new Schema<AllProduct>(
       required: true,
       max: 5,
     },
-    // productImage: {
-    //   type: [String], // Array of image URLs
-    //   validate: [
-    //     (val: string[]) => val.length <= 5,
-    //     "Maximum 5 images allowed",
-    //   ],
-    //   required: true,
-    // },
     category: {
       type: String,
       required: true,
@@ -58,19 +50,19 @@ const ProductSchema = new Schema<AllProduct>(
         category.books,
         category.electronics,
         category.mensWear,
-        category.mobliePhones,
+        category.mobilePhones,
         category.womensWear,
       ],
-      message: `please enter a category as supplied: ${category.all},${category.books},${category.electronics},${category.mensWear},${category.mobliePhones},${category.womensWear}`,
+      message: `please enter a category as supplied: ${category.all},${category.books},${category.electronics},${category.mensWear},${category.mobilePhones},${category.womensWear}`,
       default: `${category.all}`,
-    },
-    rating: {
-      type: Number,
-      default: 0,
     },
     numberOfReviews: {
       type: Number,
       default: 0,
+    },
+    stock: {
+      type: Number,
+      required: true,
     },
     dateCreated: {
       type: Date,

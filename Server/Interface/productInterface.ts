@@ -11,10 +11,9 @@ export interface Iproducts extends Document {
   name: string;
   price: number;
   category: string;
-  rating: number;
   productImage: string;
-  // productImage: string[];
   numberOfReviews: number;
   dateCreated: Date;
   reviews: Review[];
+  stock: number;
 }

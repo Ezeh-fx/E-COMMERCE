@@ -43,13 +43,16 @@ export const CreateProduct = asyncHandler(
     next: NextFunction
   ): Promise<any> => {
     try {
-      const { name, price, productImage, category, rating } = req.body;
+      console.log("req.body:", req.body);
+      console.log("req.file:", req.file);
+
+      const { name, price, category, stock } = req.body;
       const image = req.file;
 
-      if (req.body) {
+      if (!name || !price || !category || !stock) {
         return next(
           new AppError({
-            message: "All field required",
+            message: "All fields are required",
             httpCode: HttpCode.FIELD_REQUIRED,
           })
         );
@@ -58,7 +61,7 @@ export const CreateProduct = asyncHandler(
       if (!image) {
         return next(
           new AppError({
-            message: "Image not found",
+            message: "Image file is missing",
             httpCode: HttpCode.NOT_FOUND,
           })
         );
@@ -73,6 +76,7 @@ export const CreateProduct = asyncHandler(
           });
         }
       } catch (error: any) {
+        console.error("Cloudinary Upload Error:", error);
         return res.status(HttpCode.INTERNAL_SERVER_ERROR).json({
           message:
             error.message || "Cloudinary upload failed after multiple attempts",
@@ -84,24 +88,24 @@ export const CreateProduct = asyncHandler(
         price,
         productImage: uploadedImageUrl,
         category,
-        rating,
+        stock,
       });
 
       if (!createProduct) {
         return next(
           new AppError({
-            message: "Unable to create Product",
+            message: "Unable to create product",
             httpCode: HttpCode.CONFLICT,
           })
         );
       }
 
       return res.status(HttpCode.CREATE).json({
-        message: "Created Successfully",
+        message: "Product created successfully",
         data: createProduct,
       });
     } catch (error) {
-      console.log(error);
+      console.error("Create Product Error:", error);
       return next(
         new AppError({
           message: "An error occurred while creating the product",
@@ -111,6 +115,7 @@ export const CreateProduct = asyncHandler(
     }
   }
 );
+
 
 export const getProductByCategory = asyncHandler(
   async (

@@ -1,24 +1,35 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+// src/redux/features/userSlice.ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
-const initialState = {
+export interface UserType {
+  token: string
+  // Add any other user properties here
+}
+
+interface UserState {
+  user: UserType | null
+}
+
+const initialState: UserState = {
   user: null,
-};
+}
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<any>) => {
-      state.user = action.payload; // Directly store payload
+    setUser: (state, action: PayloadAction<UserType>) => {
+      state.user = action.payload
     },
     logOut: (state) => {
-      state.user = null;
+      state.user = null
     },
   },
-});
+})
 
-export const { setUser, logOut } = userSlice.actions;
-export default userSlice.reducer;
+export const { setUser, logOut } = userSlice.actions
+export default userSlice.reducer
+
 
 
 

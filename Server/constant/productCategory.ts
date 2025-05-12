@@ -1,8 +1,10 @@
+// src/constants/Category.ts (adjust path as needed)
+
 export const category = {
-  all: "all",
-  mensWear: "men's wear",
-  womensWear: "women's wear",
-  electronics: "electronics",
-  books: "books",
-  mobliePhones: "mobiles phones",
-};
+  all: "All",
+  mensWear: "Men's Wear",
+  womensWear: "Women's Wear",
+  electronics: "Electronics",
+  books: "Books",
+  mobilePhones: "Mobile Phones", // fixed typo from "mobliePhones"
+}
