@@ -142,7 +142,7 @@ const SignIn = () => {
               <div className="flex items-center justify-between w-full mobile:flex-col-reverse mobile:gap-4 mobile:mt-5">
                 <p className="text-white">
                   Don't have an account?{" "}
-                  <Link to="/">
+                  <Link to="/register">
                     <span className="text-[#302b63] cursor-pointer hover:underline font-bold">
                       Sign Up
                     </span>

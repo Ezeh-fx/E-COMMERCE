@@ -152,3 +152,67 @@ export const getAllUsers = async (token : string): Promise<IUser[]> => {
 
   return response.data.data || []
 }
+
+
+export const getOneUser = async (userId: string, token: string) => {
+ try {
+  const response = await axios.get(
+    `http://localhost:2343/api/getOne/${userId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.data; // the `user` object
+} catch (error: unknown) {
+  const axiosError = error as AxiosError;
+  console.error(
+    "OTP Request Error:",
+    axiosError.response?.data || axiosError.message
+  );
+  return axiosError.response?.data || { message: "An error occurred" };
+}
+};
+
+export const deleteUser = async (userId: string, token: string) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:2343/api/delete/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError;
+    console.error(
+      "Delete User Error:",
+      axiosError.response?.data || axiosError.message
+    );
+    return axiosError.response?.data || { message: "An error occurred" };
+  }
+};
+
+
+export const promoteUserToAdmin = async (userId: string, token: string) => {
+try {  return await axios.patch(
+  `http://localhost:2343/api/update-to-admin/${userId}`,
+  {}, // PATCH body is empty
+  {
+    headers: {
+      Authorization: `Bearer ${token}`, // ✅ token must be here
+    },
+  }
+);
+} catch (error: unknown) {
+  const axiosError = error as AxiosError;
+  console.error(
+    "Delete User Error:",
+    axiosError.response?.data || axiosError.message
+  );
+  return axiosError.response?.data || { message: "An error occurred" };
+}
+};

@@ -462,12 +462,15 @@ export const UpdateUser = asyncHandler(
 
 export const getAllUser = asyncHandler(
   async (
-    req: Request<{}, {}, Iuser>,
+    req: Request<{}, {}, any>,
     res: Response,
     next: NextFunction
   ): Promise<any> => {
     try {
-      const users = await User.find().select("-password");
+      const currentUserId = req.body.userData._id;
+
+      const users = await User.find({ _id: { $ne: currentUserId } }).select("-password");; // Exclude current user
+
 
       return res.status(HttpCode.OK).json({
         length: users.length,

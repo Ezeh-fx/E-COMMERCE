@@ -40,7 +40,7 @@ UserRoute.route("/changeProfileImage/:userId").patch(
 UserRoute.route("/resendotp").get(ResendOtp);
 UserRoute.route("/getAll").get(authenticate_token, isAdmin, getAllUser);
 UserRoute.route("/getOne/:userId").get(authenticate_token, isAdmin, getOneUser);
-UserRoute.route("/delete/:userId").get(authenticate_token, isAdmin, DeleteUser);
+UserRoute.route("/delete/:userId").delete(authenticate_token, isAdmin, DeleteUser);
 UserRoute.patch("/update-to-admin/:userId", authenticate_token, updateToadmn);
 UserRoute.post("/add", addToCart);
 UserRoute.post("/remove", removeFromCart);
