@@ -84,18 +84,21 @@ const Products = () => {
     }
   }
 
-
-
   const handleAddProduct = async (newProduct: ProductPayload) => {
     setIsSubmitting(true)
     try {
-      const productWithId: Product = {
-        ...newProduct,
-        _id: Date.now().toString(),
-      }
-      setProducts((prev) => [...prev, productWithId])
+      // Note: In a real implementation, the API would return the newly created product with an _id
+      // For now, we'll just fetch all products again to get the updated list
+      await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProduct),
+      });
+      
       setIsAddModalOpen(false)
-      fetchProducts()
+      fetchProducts() // Refresh the product list
     } catch (err) {
       console.error("Error adding product:", err)
       alert("Failed to add product. Please try again.")
@@ -151,7 +154,7 @@ const Products = () => {
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <h1 className="text-2xl font-semibold">Products</h1>
         <div className="flex flex-wrap items-center gap-3 mobile:flex-col mobile:items-stretch">
-        <input
+          <input
             type="text"
             placeholder="Search..."
             className="px-3 py-2 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -312,7 +315,111 @@ const Products = () => {
             </table>
           </div>
 
-          {/* Tablet and Mobile views omitted for brevity — same pattern */}
+          {/* Tablet view */}
+          <div className="hidden space-y-4 tablet:block mobile:hidden">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <div key={product._id} className="p-5 bg-white rounded-lg shadow">
+                  <div className="flex justify-between">
+                    <h3 className="text-lg font-medium">{product.name}</h3>
+                    <div className="flex space-x-3">
+                      <button
+                        className="p-1 text-blue-500 hover:text-blue-700"
+                        onClick={() => openEditModal(product)}
+                      >
+                        <Edit size={20} />
+                      </button>
+                      <button
+                        className="p-1 text-red-500 hover:text-red-700"
+                        onClick={() => handleDeleteProduct(product._id)}
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    <div className="text-gray-600">Category:</div>
+                    <div>{product.category}</div>
+                    <div className="text-gray-600">Price:</div>
+                    <div>${product.price.toFixed(2)}</div>
+                    <div className="text-gray-600">Stock:</div>
+                    <div>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          product.stock > 50
+                            ? "bg-green-100 text-green-800"
+                            : product.stock > 20
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {product.stock} in stock
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-5 text-center text-gray-500 bg-white rounded-lg shadow">
+                No products match your filters
+              </div>
+            )}
+          </div>
+
+          {/* Mobile view */}
+          <div className="hidden space-y-4 mobile:block">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <div key={product._id} className="p-4 bg-white rounded-lg shadow">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-medium">{product.name}</h3>
+                    <div className="flex space-x-2">
+                      <button
+                        className="p-1 text-blue-500 hover:text-blue-700"
+                        onClick={() => openEditModal(product)}
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        className="p-1 text-red-500 hover:text-red-700"
+                        onClick={() => handleDeleteProduct(product._id)}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Category:</span>
+                      <span>{product.category}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Price:</span>
+                      <span>${product.price.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">Stock:</span>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          product.stock > 50
+                            ? "bg-green-100 text-green-800"
+                            : product.stock > 20
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {product.stock} in stock
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-4 text-center text-gray-500 bg-white rounded-lg shadow">
+                No products match your filters
+              </div>
+            )}
+          </div>
         </>
       )}
 
@@ -323,7 +430,7 @@ const Products = () => {
         isSubmitting={isSubmitting}
       />
 
-      {selectedProduct && (
+{selectedProduct && (
         <EditProductModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
