@@ -90,7 +90,7 @@ export const UserLogin = async (credentials: LoginCredentials) => {
   }
 };
 
-export const ForgetPasswordSend = async (email : string) => {
+export const ForgetPasswordSend = async (email: string) => {
   try {
     const response = await axios.post(
       "http://localhost:2343/api/forgot-password",
@@ -107,14 +107,17 @@ export const ForgetPasswordSend = async (email : string) => {
   }
 };
 
-export const verifyOTPAndUpdatePassword = async (OtpCode : number, password : string) => {
-   try {
+export const verifyOTPAndUpdatePassword = async (
+  OtpCode: number,
+  password: string
+) => {
+  try {
     const respone = await axios.post(
       "http://localhost:2343/api/reset-password",
       { OtpCode, password }
-    )
+    );
     return respone.data;
-   } catch (error: unknown) {
+  } catch (error: unknown) {
     const axiosError = error as AxiosError;
     console.error(
       "Password Update Error:",
@@ -123,3 +126,29 @@ export const verifyOTPAndUpdatePassword = async (OtpCode : number, password : st
     return axiosError.response?.data || { message: "An error occurred" };
   }
 };
+
+export interface IUser {
+  _id: string;
+  firstname: string;
+  username: string;
+  email: string;
+  role: string;
+  createdAt: string;
+}
+
+export interface IUserResponse {
+  length: number;
+  message: string;
+  data: IUser[] | null;
+}
+
+export const getAllUsers = async (token : string): Promise<IUser[]> => {
+
+  const response = await axios.get<IUserResponse>("http://localhost:2343/api/getAll", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  return response.data.data || []
+}
