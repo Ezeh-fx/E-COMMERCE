@@ -27,7 +27,7 @@ interface ApiResponse {
   data: Product[] | null
 }
 
-const categoryOptions = ["All", "Electronics", "Men's Wear", "Books", "Mobile Phones", "Women's Wear"]
+const categoryOptions = ["All", "Electronics", "Men's Wear", "Accessories", "Mobile Phones", "Women's Wear"]
 
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([])

@@ -5,6 +5,6 @@ export const category = {
   mensWear: "Men's Wear",
   womensWear: "Women's Wear",
   electronics: "Electronics",
-  books: "Books",
+  accessories: "Accessories",
   mobilePhones: "Mobile Phones", // fixed typo from "mobliePhones"
 }

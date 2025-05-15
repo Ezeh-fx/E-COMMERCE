@@ -109,7 +109,7 @@ const Verify = () => {
            className="w-[550px] p-2 my-2 font-semibold text-white bg-[#e67e22] rounded-md outline-none h-[60px] cursor-pointer"
           disabled={otp.length !== 4 || loading}
         >
-          {loading ? <div className="flex gap-4">{Dotspinner()} Verifying...</div> : "Verify OTP"}
+          {loading ? <div className="flex items-center justify-center gap-4 text-[17px]">{Dotspinner()} Verifying...</div> : "Verify OTP"}
         </button>
 
         {/* Resend OTP Button */}

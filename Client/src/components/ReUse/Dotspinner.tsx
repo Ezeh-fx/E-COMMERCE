@@ -4,8 +4,8 @@ const Dotspinner = () => {
     <div className="">
       <TailSpin
         visible={true}
-        height="35"
-        width="35"
+        height="30"
+        width="30"
         color="white"
         ariaLabel="tail-spin-loading"
         radius="1"

@@ -64,7 +64,7 @@ const HomePage = () => {
               </p>
               <Link to={"/product"}>
                 <button
-                  className="bg-[#f39c12] text-white font-bold py-3 px-6 hover:bg-[#e67e22] transition rounded-[24px] bg-[#E56623B2]
+                  className="bg-[#e67e22] text-white font-bold py-3 px-6 hover:bg-[#e67e22] transition rounded-[24px] 
  drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] w-[385px] h-[75px] text-[24px] leading-[100%] tablet:w-[300px] tablet:h-[60px] tablet:text-[20px] mobile:w-[240px] mobile:h-[50px] mobile:text-[18px] mobile:py-2"
                 >
                   Veiw Product

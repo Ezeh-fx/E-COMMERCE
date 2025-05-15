@@ -47,13 +47,13 @@ const ProductSchema = new Schema<AllProduct>(
       required: true,
       enum: [
         category.all,
-        category.books,
+        category.accessories,
         category.electronics,
         category.mensWear,
         category.mobilePhones,
         category.womensWear,
       ],
-      message: `please enter a category as supplied: ${category.all},${category.books},${category.electronics},${category.mensWear},${category.mobilePhones},${category.womensWear}`,
+      message: `please enter a category as supplied: ${category.all},${category.accessories},${category.electronics},${category.mensWear},${category.mobilePhones},${category.womensWear}`,
       default: `${category.all}`,
     },
     numberOfReviews: {

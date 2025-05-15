@@ -143,17 +143,17 @@ const SignIn = () => {
                 <p className="text-white">
                   Don't have an account?{" "}
                   <Link to="/register">
-                    <span className="text-[#302b63] cursor-pointer hover:underline font-bold">
+                    <span className="text-[#e67e22] cursor-pointer hover:underline font-bold">
                       Sign Up
                     </span>
                   </Link>
                 </p>
                 <button
                   type="submit"
-                  className="relative px-6 py-2 text-white text-lg font-semibold bg-[#24243e] rounded-lg shadow-lg hover:shadow-xl transition duration-300 w-[200px] h-[60px]"
+                  className="relative px-6 py-2 text-white text-lg font-semibold bg-[#e67e22] rounded-lg shadow-lg hover:shadow-xl transition duration-300 w-[200px] h-[60px]"
                 >
                   {loading ? (
-                    <div className="flex items-center justify-center gap-4 text-[10px]">
+                    <div className="flex items-center justify-center gap-4 text-[17px]">
                       {Dotspinner()} Loading...
                     </div>
                   ) : (

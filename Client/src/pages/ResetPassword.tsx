@@ -143,9 +143,11 @@ const ResetPassword = () => {
 
   return (
     <div className="w-full min-h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] items-center justify-center">
-      {/* Left Image Panel */}
-      <div className="relative hidden w-1/2 bg-white lg:block">
+       {/* Image */}
+       <div className="relative w-1/2 bg-white mobile:hidden tablet:hidden">
+        {/* Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
+
         <img
           src={img}
           alt="signup"

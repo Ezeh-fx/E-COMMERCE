@@ -2,10 +2,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { ForgetPasswordSend } from "../Api/AuthApi/AuthApi";
 import Alert from "../components/ReUse/Alert";
 import img from "../assets/signUp.jpg";
+import { ThreeCircles } from "react-loader-spinner";
 
 const ForgetPassword = () => {
   // Validation Schema
@@ -16,6 +17,11 @@ const ForgetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [start, setStart] = useState(true);
+
+      useEffect(() => {
+        setTimeout(() => setStart(false), 2000);
+      }, []);
 
   // React Hook Form
   const {
@@ -58,9 +64,24 @@ const ForgetPassword = () => {
   };
 
   return (
-    <div className="flex w-full h-screen bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29]">
-      {/* Image (hidden on mobile/tablet) */}
-      <div className="relative hidden w-1/2 bg-white lg:block">
+    <div className="w-full">
+    {
+      start ? (
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1c1a32]">
+                  <ThreeCircles
+                    visible={true}
+                    height="100"
+                    width="100"
+                    color="#e67e22"
+                    ariaLabel="three-circles-loading"
+                  />
+                  <p className="mt-3 text-lg font-medium text-[#e67e22]">Loading...</p>
+                </div>
+      ) : (
+        <>
+               <div className="flex w-full h-screen bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29]">
+       {/* Image */}
+       <div className="relative w-1/2 bg-white mobile:hidden tablet:hidden">
         {/* Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
 
@@ -72,7 +93,7 @@ const ForgetPassword = () => {
       </div>
 
       {/* Form Section */}
-      <div className="flex flex-col items-center justify-center w-full h-full px-4 py-6 lg:w-1/2">
+      <div className="flex flex-col items-center justify-center w-1/2 h-full px-4 py-6 lg:w-1/2">
         {/* Icon */}
         <div className="flex flex-col items-center justify-center w-full gap-4">
           <h1 className="text-3xl font-bold text-center text-white">Forget Password</h1>
@@ -116,6 +137,9 @@ const ForgetPassword = () => {
           </div>
         )}
       </div>
+    </div>
+        </>
+      ) }
     </div>
   );
 };

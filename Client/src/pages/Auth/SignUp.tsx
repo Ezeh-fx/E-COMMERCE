@@ -337,7 +337,7 @@ const SignUp = () => {
             <p className="text-white">
               Already have an account?{" "}
               <Link to="/Login">
-                <span className="text-[#302b63] cursor-pointer hover:underline font-bold">
+                <span className="text-[#e67e22] cursor-pointer hover:underline font-bold">
                   Login
                 </span>
               </Link>
@@ -346,12 +346,12 @@ const SignUp = () => {
             <button
               disabled={loading}
               className={`${
-                !loading ? "bg-[#24243e] " : "opacity-50 bg-[#24243e] "
-              }relative px-6 py-2 text-white text-lg font-semibold bg-[#24243e] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_15px_rgba(255,255,255,0.5)] transition duration-300 w-[200px] h-[60px] justify-center flex items-center`}
+                !loading ? "bg-[#e67e22] " : "opacity-50 bg-[#e67e22] "
+              }relative px-6 py-2 text-white text-lg font-semibold bg-[#24243e] rounded-lg  shadow-lg hover:shadow-xl transition duration-300 w-[200px] h-[60px] justify-center flex items-center`}
               type="submit"
             >
               {loading ? (
-                <div className="flex">{Dotspinner()} Loading ...</div>
+                <div className="flex items-center justify-center gap-4 text-[17px]">{Dotspinner()} Loading ...</div>
               ) : (
                 "Sign Up"
               )}

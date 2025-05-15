@@ -30,13 +30,7 @@ export const CreateUser = asyncHandler(
     next: NextFunction
   ): Promise<any> => {
     try {
-      const {
-        firstname,
-        lastname,
-        username,
-        email,
-        password,
-      } = req.body;
+      const { firstname, lastname, username, email, password } = req.body;
 
       console.log(req.body);
 
@@ -222,7 +216,11 @@ export const LoginUser = asyncHandler(
         );
       }
 
-      const Token = generateToken({ _id: FindUser._id, email: FindUser.email, role: FindUser.role,});
+      const Token = generateToken({
+        _id: FindUser._id,
+        email: FindUser.email,
+        role: FindUser.role,
+      });
       const Refresh = generateRefreshToken({
         _id: FindUser._id,
         email: FindUser.email,
@@ -233,7 +231,8 @@ export const LoginUser = asyncHandler(
         message: "Login successful",
         data: {
           id: FindUser.id,
-          name: FindUser.name,
+          firstname: FindUser.firstname,
+          profileImages: FindUser.profileImages,
           email: FindUser.email,
           token: Token,
           refresh: Refresh,
@@ -276,6 +275,7 @@ const uploadImageWithRetries = async (image: any, retries = 3) => {
   return null;
 };
 
+
 export const ChangeUserProfileImage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
@@ -310,24 +310,16 @@ export const ChangeUserProfileImage = asyncHandler(
         );
       }
 
-      let uploadedImageUrl: string | null = null;
-      try {
-        uploadedImageUrl = await uploadImageWithRetries(image);
-        if (!uploadedImageUrl) {
-          return res.status(HttpCode.INTERNAL_SERVER_ERROR).json({
-            message: "Cloudinary upload failed after multiple attempts",
-          });
-        }
-      } catch (error: any) {
+      const uploadedImageUrl = await uploadImageWithRetries(image);
+      if (!uploadedImageUrl) {
         return res.status(HttpCode.INTERNAL_SERVER_ERROR).json({
-          message:
-            error.message || "Cloudinary upload failed after multiple attempts",
+          message: "Cloudinary upload failed",
         });
       }
 
       const updatedUser = await User.findByIdAndUpdate(
         user._id,
-        { profileImage: uploadedImageUrl }, // Ensure this field matches your schema
+        { profileImages: uploadedImageUrl }, 
         { new: true }
       );
 
@@ -341,8 +333,8 @@ export const ChangeUserProfileImage = asyncHandler(
       }
 
       return res.status(HttpCode.OK).json({
-        message: "Image change successfully completed",
-        data: updatedUser,
+        message: "Image updated successfully",
+        user: updatedUser,
       });
     } catch (error) {
       console.error(error);
@@ -469,8 +461,9 @@ export const getAllUser = asyncHandler(
     try {
       const currentUserId = req.body.userData._id;
 
-      const users = await User.find({ _id: { $ne: currentUserId } }).select("-password");; // Exclude current user
-
+      const users = await User.find({ _id: { $ne: currentUserId } }).select(
+        "-password"
+      ); // Exclude current user
 
       return res.status(HttpCode.OK).json({
         length: users.length,

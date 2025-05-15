@@ -17,6 +17,7 @@ import {
   ResendOtp,
   UpdatePassword,
   updateToadmn,
+  UpdateUser,
   VerifyAccount,
 } from "../controller/userController";
 import multer from "multer";
@@ -32,6 +33,7 @@ const UserRoute = Router();
 
 UserRoute.route("/register").post(registerValidation, CreateUser);
 UserRoute.route("/verify").post(VerifyAccount);
+UserRoute.route("/update/:userId").patch(UpdateUser);
 UserRoute.route("/Login").post(loginValidation, LoginUser);
 UserRoute.route("/changeProfileImage/:userId").patch(
   upload.single("profileImage"),
