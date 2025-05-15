@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { ThreeCircles } from "react-loader-spinner";
 import bg from "../assets/bg_img.png";
-import { GRID1 } from "../components/data/data";
-import { GRID2 } from "../components/data/data";
 import about from "../assets/About.png";
 import contact from "../assets/Contact.png";
 import { FaFacebook } from "react-icons/fa";
@@ -11,6 +9,8 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { getAllProducts, ProductPayload } from "../Api/ProductApi/ProductApi";
+import ProductSidebar from "./Product_Detail";
 
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,49 @@ const HomePage = () => {
     setTimeout(() => setLoading(false), 2000);
     AOS.init({ duration: 1000, once: true }); // ✅ Initialize scroll animation
   }, []);
-  
+
+  const [products, setProducts] = useState<ProductPayload[]>([]);
+  const [hotProducts, setHotProducts] = useState<ProductPayload[]>([]);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await getAllProducts();
+        if (res && Array.isArray(res.data)) {
+          const sorted = [...res.data].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+
+          setHotProducts(sorted.slice(0, 4)); // Newest 4 products
+          setProducts(sorted.slice().reverse()); // Least recent products
+        } else {
+          console.error("Invalid product data format:", res);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const handleProductClick = (productId: string) => {
+    setSelectedProductId(productId);
+    // Add a class to the body to prevent scrolling when sidebar is open
+    document.body.style.overflow = "hidden";
+  };
+
+  // Function to close the sidebar
+  const closeSidebar = () => {
+    setSelectedProductId(null);
+    // Restore scrolling when sidebar is closed
+    document.body.style.overflow = "auto";
+  };
+
   return (
     <div className="w-full bg-[#0D0B1E]">
       {loading ? (
@@ -39,6 +81,12 @@ const HomePage = () => {
         </div>
       ) : (
         <>
+          {/* Product Sidebar */}
+          <ProductSidebar
+            productId={selectedProductId}
+            onClose={closeSidebar}
+          />
+
           {/* Main Content */}
           <div className="w-full h-[87vh] relative overflow-hidden">
             {/* Background Image */}
@@ -65,7 +113,7 @@ const HomePage = () => {
               <Link to={"/product"}>
                 <button
                   className="bg-[#e67e22] text-white font-bold py-3 px-6 hover:bg-[#e67e22] transition rounded-[24px] 
- drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] w-[385px] h-[75px] text-[24px] leading-[100%] tablet:w-[300px] tablet:h-[60px] tablet:text-[20px] mobile:w-[240px] mobile:h-[50px] mobile:text-[18px] mobile:py-2"
+                  drop-shadow-[0_4px_6px_rgba(255,255,255,0.3)] w-[385px] h-[75px] text-[24px] leading-[100%] tablet:w-[300px] tablet:h-[60px] tablet:text-[20px] mobile:w-[240px] mobile:h-[50px] mobile:text-[18px] mobile:py-2"
                 >
                   Veiw Product
                 </button>
@@ -73,79 +121,93 @@ const HomePage = () => {
             </div>
           </div>
 
-        {/* Hot Products Section - Improved for mobile */}
-<section className="flex flex-col items-center gap-[60px] mt-10 tablet:gap-[40px] mobile:gap-[30px] px-4 tablet:px-3 mobile:px-2">
-  <h1 className="text-[40px] font-bold text-center text-white tablet:text-[36px] mobile:text-[30px]">Hot Products</h1>
-  
-  {/* Improved Grid Layout */}
-  <div className="grid w-full grid-cols-4 gap-6 mobile:grid-cols-1 mobile:gap-6 tablet:grid-cols-2 tablet:gap-4  mobile:w-[90%] tablet:w-[90%]">
-    {GRID1.map((item, i) => (
-      <div 
-        key={i} 
-        data-aos="fade-up" // ✅ Animation added here
-        className="w-full bg-[#1c1a32] rounded-lg flex flex-col gap-3 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#2a2845]"
-      >
-        {/* Image container with fixed aspect ratio */}
-        <div className="w-full pt-[75%] relative">
-          <img 
-            src={item.img || "/placeholder.svg"} 
-            alt={typeof item.title === "string" ? item.title : ""} 
-            className="absolute top-0 left-0 object-cover w-full h-full"
-          />
-        </div>
-        
-        {/* Content container with consistent padding */}
-        <div className="flex flex-col flex-grow gap-3 p-4">
-          <p className="text-white text-[20px] tablet:text-[18px] mobile:text-[18px] font-medium line-clamp-2 min-h-[56px] mobile:min-h-[50px]">{item.title}</p>
-          
-          <div className="flex items-center justify-between mt-auto">
-            <p className="text-white text-[18px] tablet:text-[16px] mobile:text-[16px] font-bold">{item.price}</p>
-            <button className="bg-[#E56623B2] text-white px-4 py-2 mobile:px-3 mobile:py-1.5 rounded-[10px] hover:bg-[#e67e22] transition-colors duration-300 text-sm mobile:text-sm whitespace-nowrap">
-              Add to cart
-            </button>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-</section>
+          {/* Hot Products Section - Improved for mobile */}
+          <section className="flex flex-col items-center gap-[60px] mt-10 tablet:gap-[40px] mobile:gap-[30px] px-4 tablet:px-3 mobile:px-2">
+            <h1 className="text-[40px] font-bold text-center text-white tablet:text-[36px] mobile:text-[30px]">
+              Hot Products
+            </h1>
 
-{/* Least Products Section - Improved for mobile */}
-<section className="flex flex-col items-center gap-[60px] mt-20 tablet:gap-[40px] tablet:mt-16 mobile:gap-[30px] mobile:mt-12 px-4 tablet:px-3 mobile:px-2">
-  <h1 className="text-[40px] font-bold text-center text-white tablet:text-[36px] mobile:text-[30px]">Least Products</h1>
-  
-  {/* Improved Grid Layout */}
-  <div className="grid w-full grid-cols-4 gap-6 tablet:grid-cols-2 tablet:gap-4 mobile:grid-cols-1 mobile:gap-6  mobile:w-[90%] tablet:w-[90%]">
-    {GRID2.map((item, i) => (
-      <div 
-        key={i} 
-        data-aos="fade-up" // ✅ Animation added here
-        className="w-full bg-[#1c1a32] rounded-lg flex flex-col gap-3 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#2a2845]"
-      >
-        {/* Image container with fixed aspect ratio */}
-        <div className="w-full pt-[75%] relative">
-          <img 
-            src={item.img || "/placeholder.svg"} 
-            alt={typeof item.title === "string" ? item.title : ""} 
-            className="absolute top-0 left-0 object-cover w-full h-full"
-          />
-        </div>
-        
-        {/* Content container with consistent padding */}
-        <div className="flex flex-col flex-grow gap-3 p-4">
-          <p className="text-white text-[20px] tablet:text-[18px] mobile:text-[18px] font-medium line-clamp-2 min-h-[56px] mobile:min-h-[50px]">{item.title}</p>
-          
-          <div className="flex items-center justify-between mt-auto">
-            <p className="text-white text-[18px] tablet:text-[16px] mobile:text-[16px] font-bold">{item.price}</p>
-            <button className="bg-[#E56623B2] text-white px-4 py-2 mobile:px-3 mobile:py-1.5 rounded-[10px] hover:bg-[#e67e22] transition-colors duration-300 text-sm mobile:text-sm whitespace-nowrap">
-              Add to cart
-            </button>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-</section>
+            {/* Improved Grid Layout */}
+            <div className="grid w-full grid-cols-4 gap-6 mobile:grid-cols-1 mobile:gap-6 tablet:grid-cols-2 tablet:gap-4  mobile:w-[90%] tablet:w-[90%]">
+              {hotProducts.map((product) => (
+                <div
+                  key={product.createdAt}
+                  data-aos="fade-up" // ✅ Animation added here
+                  className="w-full bg-[#1c1a32] rounded-lg flex flex-col gap-3 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#2a2845] cursor-pointer"
+                  onClick={() => handleProductClick(product._id)}
+                >
+                  {/* Image container with fixed aspect ratio */}
+                  <div className="w-full pt-[75%] relative">
+                    <img
+                      src={product.productImage}
+                      alt={typeof product.name === "string" ? product.name : ""}
+                      className="absolute top-0 left-0 object-cover w-full h-full"
+                    />
+                  </div>
+
+                  {/* Content container with consistent padding */}
+                  <div className="flex flex-col flex-grow gap-3 p-4">
+                    <p className="text-white text-[20px] tablet:text-[18px] mobile:text-[18px] font-medium line-clamp-2 min-h-[56px] mobile:min-h-[50px]">
+                      {product.name}
+                    </p>
+
+                    <div className="flex items-center justify-between mt-auto">
+                      <p className="text-white text-[18px] tablet:text-[16px] mobile:text-[16px] font-bold">
+                        {product.price}$
+                      </p>
+                      <button className="bg-[#E56623B2] text-white px-4 py-2 mobile:px-3 mobile:py-1.5 rounded-[10px] hover:bg-[#e67e22] transition-colors duration-300 text-sm mobile:text-sm whitespace-nowrap">
+                        Add to cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Least Products Section - Improved for mobile */}
+          <section className="flex flex-col items-center gap-[60px] mt-20 tablet:gap-[40px] tablet:mt-16 mobile:gap-[30px] mobile:mt-12 px-4 tablet:px-3 mobile:px-2">
+            <h1 className="text-[40px] font-bold text-center text-white tablet:text-[36px] mobile:text-[30px]">
+              Least Products
+            </h1>
+
+            {/* Improved Grid Layout */}
+            <div className="grid w-full grid-cols-4 gap-6 tablet:grid-cols-2 tablet:gap-4 mobile:grid-cols-1 mobile:gap-6  mobile:w-[90%] tablet:w-[90%]">
+              {products.slice(0, 16).map((product) => (
+                <div
+                  key={product._id}
+                  data-aos="fade-up" // ✅ Animation added here
+                  className="w-full bg-[#1c1a32] rounded-lg flex flex-col gap-3 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[#2a2845] cursor-pointer"
+                  onClick={() => handleProductClick(product._id)}
+                >
+                  {/* Image container with fixed aspect ratio */}
+                  <div className="w-full pt-[75%] relative">
+                    <img
+                      src={product.productImage}
+                      alt={typeof product.name === "string" ? product.name : ""}
+                      className="absolute top-0 left-0 object-cover w-full h-full"
+                    />
+                  </div>
+
+                  {/* Content container with consistent padding */}
+                  <div className="flex flex-col flex-grow gap-3 p-4">
+                    <p className="text-white text-[20px] tablet:text-[18px] mobile:text-[18px] font-medium line-clamp-2 min-h-[56px] mobile:min-h-[50px]">
+                      {product.name}
+                    </p>
+
+                    <div className="flex items-center justify-between mt-auto">
+                      <p className="text-white text-[18px] tablet:text-[16px] mobile:text-[16px] font-bold">
+                        {product.price}$
+                      </p>
+                      <button className="bg-[#E56623B2] text-white px-4 py-2 mobile:px-3 mobile:py-1.5 rounded-[10px] hover:bg-[#e67e22] transition-colors duration-300 text-sm mobile:text-sm whitespace-nowrap">
+                        Add to cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
           {/* About Us */}
           <div
@@ -221,7 +283,11 @@ const HomePage = () => {
             </h1>
 
             <div className="flex items-center justify-around w-full h-auto px-6 tablet:px-5 mobile:px-4 tablet:flex-col">
-              <img src={contact || "/placeholder.svg"} alt="" className="w-[40%] tablet:w-full" />
+              <img
+                src={contact || "/placeholder.svg"}
+                alt=""
+                className="w-[40%] tablet:w-full"
+              />
 
               <div className="w-auto h-full font-normal text-[32px] leading-[100%] text-white flex flex-col gap-5 tablet:w-full tablet:mt-8 mobile:mt-6 tablet:text-[26px] mobile:text-[20px] tablet:gap-4 mobile:gap-3 tablet:leading-relaxed">
                 <span>Info at quickcart@gmail.com</span>
@@ -238,7 +304,11 @@ const HomePage = () => {
                 </div>
 
                 <p className="text-[20px] flex justify-center items-center gap-1 tablet:text-[18px] mobile:text-[16px] mobile:mb-5 tablet:mb-5">
-                  Want to message us click <IoIosArrowRoundForward size={30} className="tablet:w-6 tablet:h-6 mobile:w-5 mobile:h-5" />
+                  Want to message us click{" "}
+                  <IoIosArrowRoundForward
+                    size={30}
+                    className="tablet:w-6 tablet:h-6 mobile:w-5 mobile:h-5"
+                  />
                   <Link to={"/contact"}>
                     <span className="text-[#E67E25] cursor-pointer hover:underline">
                       Contact Us

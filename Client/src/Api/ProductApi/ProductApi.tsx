@@ -7,8 +7,9 @@ export interface ProductPayload {
   category: string
   price: number
   stock: number
-  rating?: number
   productImage: string
+  _id: string
+   createdAt: string;
 }
 
 export const getAllProducts = async () => {
@@ -54,6 +55,17 @@ export const updateProduct = async (productId: string, updatedData: Partial<Prod
 export const deleteProduct = async (productId: string) => {
   try {
     const response = await axios.delete(`${BASE_URL}/delete_product/${productId}`)
+    return response.data
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError
+    console.error("Delete Product Error:", axiosError.response?.data || axiosError.message)
+    return axiosError.response?.data || { message: "An error occurred" }
+  }
+}
+
+export const getOneProduct = async (productId: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/getone/${productId}`)
     return response.data
   } catch (error: unknown) {
     const axiosError = error as AxiosError
