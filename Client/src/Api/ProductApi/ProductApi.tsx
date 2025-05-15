@@ -100,3 +100,22 @@ export const getProductsByCategory = async (category: string) => {
       return axiosError.response?.data || { message: "An error occurred" }
     }
   }
+
+
+export const createReview = async (productId: string, reviewData: any, token: string) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/review/${productId}`,
+      reviewData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Error creating review:", error);
+    throw error;
+  }
+};

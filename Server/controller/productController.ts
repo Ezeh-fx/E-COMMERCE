@@ -511,3 +511,57 @@ export const updateProductImage = asyncHandler(
     }
   }
 );
+
+
+export const createReview = asyncHandler(
+  async (req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction) => {
+    try {
+      const productId = req.params.id;
+      const { rating, comment } = req.body;
+
+      const product = await Product.findById(productId);
+
+      if (!product) {
+        return next(
+          new AppError({
+            message: "Product not found",
+            httpCode: HttpCode.NOT_FOUND,
+          })
+        );
+      }
+
+      // Prevent duplicate reviews by same user
+      const alreadyReviewed = product.reviews.find(
+        (review) => review.user.toString() === (req.user as any)?._id?.toString()
+      );
+
+      if (alreadyReviewed) {
+        return next(
+          new AppError({
+            message: "You have already reviewed this product",
+            httpCode: HttpCode.BAD_REQUEST,
+          })
+        );
+      }
+
+      const newReview = {
+        user: (req.user as any)?._id,
+        name: (req.user as any)?.firstName,
+        rating: Number(rating),
+        comment,
+      };
+
+      product.reviews.push(newReview);
+      product.numberOfReviews = product.reviews.length;
+
+      await product.save();
+
+      return res.status(HttpCode.CREATE).json({
+        message: "Review created successfully",
+      });
+    } catch (error) {
+      console.error("Error creating review:", error);
+      return next(error);
+    }
+  }
+);

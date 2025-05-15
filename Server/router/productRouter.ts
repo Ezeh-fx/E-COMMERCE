@@ -4,6 +4,7 @@ import { isAdmin } from "../middleware/Authentication/adminAuth";
 import multer from "multer";
 import {
   CreateProduct,
+  createReview,
   DeleteProduct,
   FindProductBySearch,
   GetAllProduct,
@@ -33,5 +34,6 @@ ProductRoute.route("/search").get(FindProductBySearch);
 ProductRoute.route("/update_product/:productId").patch(updateProduct);
 ProductRoute.route("/update_productImage").patch(updateProductImage);
 ProductRoute.route("/delete_product/:productId").delete(DeleteProduct);
+ProductRoute.post("/review/:productId", authenticate_token, createReview);
 
 export default ProductRoute;

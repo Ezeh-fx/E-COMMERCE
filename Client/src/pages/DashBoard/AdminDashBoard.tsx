@@ -7,7 +7,7 @@ const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen ">
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-30 w-64 bg-gray-800 transform transition-transform duration-300
