@@ -426,7 +426,7 @@ const ProductSidebar = ({ productId, onClose }: ProductSidebarProps) => {
                       {product.reviews.map((review, index) => (
                         <div key={index} className="p-4 border border-gray-200 rounded-lg">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium">{review.name}</span>
+                            <span className="font-medium text-black">{review.name}</span>
                             <div className="flex items-center">
                               {Array.from({ length: 5 }).map((_, i) => (
                                 <svg
