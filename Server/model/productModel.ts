@@ -1,13 +1,14 @@
 import { Document, model, Schema } from "mongoose";
 import { Iproducts } from "../Interface/productInterface";
 import { category } from "../constant/productCategory";
+import mongoose from "mongoose";
 
 interface AllProduct extends Iproducts, Document {}
 
 const CommetSchema = new Schema(
   {
     user: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },

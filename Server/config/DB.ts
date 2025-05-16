@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { envVaraibles } from "../env/environmentVar";
 
-const url = envVaraibles.DB_STRING;
+const url = envVaraibles.MONGODB_STRING_Live;
 
 export const DB = async () => {
   try {

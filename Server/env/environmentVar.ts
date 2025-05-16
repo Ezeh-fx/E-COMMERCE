@@ -18,5 +18,6 @@ export const envVaraibles = {
     STRIPE_SECRET_KEY : process.env.STRIPE_SECRET_KEY as string,
     OPENCAGE_API_KEY : process.env.OPENCAGE_API_KEY as string,
     PublicKey : process.env.PublicKey as string,
-    PrivateKey : process.env.PrivateKey as string
+    PrivateKey : process.env.PrivateKey as string,
+    MONGODB_STRING_Live : process.env.MONGODB_STRING_Live as string,
 }

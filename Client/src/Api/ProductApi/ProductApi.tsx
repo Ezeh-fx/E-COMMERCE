@@ -101,20 +101,35 @@ export const getProductsByCategory = async (category: string) => {
     }
   }
 
+  interface ReviewFormData {
+  rating: number;
+  comment: string;
+}
 
-export const createReview = async (productId: string, reviewData: any, token: string) => {
+
+export const createReview = async (
+  productId: string,
+  reviewData: ReviewFormData,
+  token: string,
+) => {
   try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+
     const response = await axios.post(
       `${BASE_URL}/review/${productId}`,
       reviewData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      config
     );
-    return response.data;
-  } catch (error: any) {
+
+    
+    return response;
+  } catch (error) {
     console.error("Error creating review:", error);
     throw error;
   }

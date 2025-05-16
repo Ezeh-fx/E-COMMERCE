@@ -5,6 +5,7 @@ import cloudinary from "../Utils/Cloudinary";
 import streamifier from "streamifier";
 import { asyncHandler } from "../error/Async/asyncHandler";
 import { Iproducts } from "../Interface/productInterface";
+import mongoose from "mongoose";
 
 const uploadImageWithRetries = async (image: any, retries = 3) => {
   let attempts = 0;
@@ -513,55 +514,161 @@ export const updateProductImage = asyncHandler(
 );
 
 
-export const createReview = asyncHandler(
-  async (req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction) => {
-    try {
-      const productId = req.params.id;
-      const { rating, comment } = req.body;
+export const createReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { productId } = req.params;
+    const { rating, comment,name } = req.body;
+    const userId = (req as any).body.userData?._id;
 
-      const product = await Product.findById(productId);
-
-      if (!product) {
-        return next(
-          new AppError({
-            message: "Product not found",
-            httpCode: HttpCode.NOT_FOUND,
-          })
-        );
-      }
-
-      // Prevent duplicate reviews by same user
-      const alreadyReviewed = product.reviews.find(
-        (review) => review.user.toString() === (req.user as any)?._id?.toString()
+    // ✅ Validate rating
+    if (!rating || rating < 1 || rating > 5) {
+      return next(
+        new AppError({
+          message: "Rating must be between 1 and 5",
+          httpCode: HttpCode.BAD_REQUEST,
+        })
       );
-
-      if (alreadyReviewed) {
-        return next(
-          new AppError({
-            message: "You have already reviewed this product",
-            httpCode: HttpCode.BAD_REQUEST,
-          })
-        );
-      }
-
-      const newReview = {
-        user: (req.user as any)?._id,
-        name: (req.user as any)?.firstName,
-        rating: Number(rating),
-        comment,
-      };
-
-      product.reviews.push(newReview);
-      product.numberOfReviews = product.reviews.length;
-
-      await product.save();
-
-      return res.status(HttpCode.CREATE).json({
-        message: "Review created successfully",
-      });
-    } catch (error) {
-      console.error("Error creating review:", error);
-      return next(error);
     }
+
+    // ✅ Validate comment
+    if (!comment || comment.trim() === "") {
+      return next(
+        new AppError({
+          message: "Review comment is required",
+          httpCode: HttpCode.BAD_REQUEST,
+        })
+      );
+    }
+
+    // ✅ Validate product ID format
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return next(
+        new AppError({
+          message: "Invalid product ID format",
+          httpCode: HttpCode.BAD_REQUEST,
+        })
+      );
+    }
+
+    // ✅ Fetch product
+    const product = await Product.findById(productId);
+    if (!product) {
+      return next(
+        new AppError({
+          message: "Product not found",
+          httpCode: HttpCode.NOT_FOUND,
+        })
+      );
+    }
+
+    // ✅ Check authentication
+    if (!userId) {
+      return next(
+        new AppError({
+          message: "You must be logged in to review products",
+          httpCode: HttpCode.UNAUTHORIZED,
+        })
+      );
+    }
+
+    // 🚫 Prevent duplicate review
+    const alreadyReviewed = product.reviews.find(
+      (review) => review.user.toString() === userId.toString()
+    );
+    if (alreadyReviewed) {
+      return next(
+        new AppError({
+          message: "You have already reviewed this product",
+          httpCode: HttpCode.BAD_REQUEST,
+        })
+      );
+    }
+
+    // ✅ Construct review
+    const newReview = {
+      user: userId, // 👈 This works as long as your schema defines it as ObjectId
+      name, // 👈 Fallback to "Anonymous" if name is not available
+      rating: Number(rating),
+      comment,
+    };
+
+    product.reviews.push(newReview);
+    product.numberOfReviews = product.reviews.length;
+
+    await product.save(); // 👈 Save is necessary!
+
+    return res.status(HttpCode.CREATE).json({
+      success: true,
+      message: "Review added successfully",
+    });
+  } catch (error) {
+    console.error("Error creating review:", error);
+
+    if (!(error instanceof AppError)) {
+      return next(
+        new AppError({
+          message: "Failed to add review. Please try again.",
+          httpCode: HttpCode.INTERNAL_SERVER_ERROR,
+        })
+      );
+    }
+
+    return next(error);
   }
-);
+};
+
+
+export const getProductReviews = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {productId} = req.params;
+    
+    // Validate product ID format
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return next(
+        new AppError({
+          message: "Invalid product ID format",
+          httpCode: HttpCode.BAD_REQUEST,
+        })
+      );
+    }
+
+    const product = await Product.findById(productId);
+    
+    if (!product) {
+      return next(
+        new AppError({
+          message: "Product not found",
+          httpCode: HttpCode.NOT_FOUND,
+        })
+      );
+    }
+
+    return res.status(HttpCode.OK).json({
+      success: true,
+      reviews: product.reviews,
+      count: product.reviews.length
+    });
+    
+  } catch (error) {
+    console.error("Error fetching product reviews:", error);
+    
+    if (!(error instanceof AppError)) {
+      return next(
+        new AppError({
+          message: "Failed to fetch reviews. Please try again.",
+          httpCode: HttpCode.INTERNAL_SERVER_ERROR,
+        })
+      );
+    }
+    
+    return next(error);
+  }
+};

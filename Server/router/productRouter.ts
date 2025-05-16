@@ -10,6 +10,7 @@ import {
   GetAllProduct,
   getOneProduct,
   getProductByCategory,
+  getProductReviews,
   updateProduct,
   updateProductImage,
 } from "../controller/productController";
@@ -34,6 +35,16 @@ ProductRoute.route("/search").get(FindProductBySearch);
 ProductRoute.route("/update_product/:productId").patch(updateProduct);
 ProductRoute.route("/update_productImage").patch(updateProductImage);
 ProductRoute.route("/delete_product/:productId").delete(DeleteProduct);
-ProductRoute.post("/review/:productId", authenticate_token, createReview);
+ProductRoute.post(
+  "/review/:productId",
+  authenticate_token,
+  (req, res, next) => {
+    Promise.resolve(createReview(req, res, next)).catch(next);
+  }
+);
+
+ProductRoute.get('/review/:productId', (req, res, next) => {
+  Promise.resolve(getProductReviews(req, res, next)).catch(next);
+});
 
 export default ProductRoute;

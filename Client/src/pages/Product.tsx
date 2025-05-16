@@ -145,16 +145,7 @@ const Product = () => {
             />
           </div>
 
-            {!isLoading && !error && products.length === 0 && (
-        <div className="p-8 text-center bg-white rounded-lg shadow">
-          <p className="mb-4 text-gray-500">No products available</p>
-          <button
-            className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-          >
-            Add Your First Product
-          </button>
-        </div>
-      )}
+         
           {error && (
             <div className="flex items-center justify-center mb-4">
               <p className="text-red-500">{error}</p>
@@ -176,6 +167,17 @@ const Product = () => {
               </button>
             ))}
           </div>
+
+            {!isLoading && !error && products.length === 0 && (
+        <div className="p-8 text-center rounded-lg shadow">
+          <p className="mb-4 text-gray-500">No products available</p>
+          <button
+            className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+          >
+            Add Your First Product
+          </button>
+        </div>
+      )}
 
           {/* Product Grid */}
           <div className="grid w-full grid-cols-4 gap-6 tablet:grid-cols-2 tablet:gap-4 mobile:grid-cols-1 mobile:gap-6  mobile:w-[90%] tablet:w-[90%]">
