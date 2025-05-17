@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { UserLogin } from "../../Api/AuthApi/AuthApi";
 import { useDispatch } from "react-redux";
-import Swal from "sweetalert2";
 import { setUser } from "../../global/useReducer";
 import Dotspinner from "../../components/ReUse/Dotspinner";
 import { jwtDecode } from "jwt-decode";
@@ -18,6 +17,8 @@ const SignIn = () => {
   const [show, setShow] = useState(true);
   const [loading, setLoading] = useState(false);
   const [start, setStart] = useState(true);
+  const [serverError, setServerError] = useState("");
+  const [serverSuccess, setServerSuccess] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -38,42 +39,55 @@ const SignIn = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data : any) => {
     setLoading(true);
+    setServerError("");
+    setServerSuccess("");
+    
     try {
       const response = await UserLogin(data);
       console.log("Login response:", response);
 
       if (response.data?.token) {
         const { token, ...userInfo } = response.data;
-        dispatch(setUser({ ...userInfo, token })); // ✅ Fix: store token correctly
+        dispatch(setUser({ ...userInfo, token }));
 
-        alert("Login successful. Welcome to your easy online shopping.");
-
-        const decoded: any = jwtDecode(token);
-        if (decoded.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/");
-        }
+        setServerSuccess("Login successful! Welcome to your easy online shopping.");
+        
+        // Navigate after brief delay to show success message
+        setTimeout(() => {
+          const decoded: any = jwtDecode(token);
+          if (decoded.role === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/");
+          }
+        }, 1500);
       } else {
-        Swal.fire({
-          title: "Email does not exist. Please register.",
-          width: 600,
-          padding: "3em",
-          color: "#716add",
-          background: "#fff url(/images/trees.png)",
-          backdrop: `
-            rgba(0,0,123,0.4)
-            url("/images/nyan-cat.gif")
-            left top
-            no-repeat
-          `,
-        });
+        setServerError("Email or password is incorrect.");
       }
     } catch (error) {
       console.error("Login Error:", error);
-      Swal.fire("Login failed", "Check your credentials and try again", "error");
+
+      // Type guard for error object
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof (error as any).response === "object" &&
+        (error as any).response !== null
+      ) {
+        const errResponse = (error as any).response;
+        if (errResponse.data && errResponse.data.message) {
+          setServerError(errResponse.data.message);
+        } else if (errResponse.status === 401) {
+          setServerError("Invalid email or password. Please try again.");
+        } else {
+          setServerError("Login failed. Please check your credentials and try again.");
+        }
+      } else {
+        setServerError("Login failed. Please check your credentials and try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -95,12 +109,27 @@ const SignIn = () => {
           </div>
 
           {/* Form */}
-          <div className="flex flex-col items-center justify-center w-1/2 h-full mobile:w-full mobile:h-screen tablet:w-full">
-            <CgProfile color="white" size={70} />
+          <div className="flex flex-col items-center justify-center w-1/2 h-full mobile:w-full mobile:h-auto tablet:w-full">
+            <CgProfile color="white" size={70} className="mb-4" />
+            
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col items-start justify-center w-auto h-auto gap-4 mobile:w-full mobile:px-4"
             >
+              {/* Server Error Message */}
+              {serverError && (
+                <div className="w-full p-3 mb-2 text-white transition-all duration-300 bg-red-500 rounded-lg shadow-md">
+                  <p className="font-medium">{serverError}</p>
+                </div>
+              )}
+
+              {/* Server Success Message */}
+              {serverSuccess && (
+                <div className="w-full p-3 mb-2 text-white transition-all duration-300 bg-green-500 rounded-lg shadow-md">
+                  <p className="font-medium">{serverSuccess}</p>
+                </div>
+              )}
+              
               {/* Email */}
               <div className="flex flex-col w-[550px] mobile:w-full">
                 <label className="font-bold text-white">Email</label>
@@ -111,7 +140,9 @@ const SignIn = () => {
                   className="w-full p-2 my-2 bg-white font-semibold rounded-md outline-none h-[60px]"
                 />
                 {errors.email && (
-                  <div className="text-xs text-red-600">{errors.email.message}</div>
+                  <div className="px-2 py-1 mt-1 text-xs font-medium text-white bg-red-500 rounded">
+                    {errors.email.message}
+                  </div>
                 )}
               </div>
 
@@ -134,7 +165,9 @@ const SignIn = () => {
                   </div>
                 </div>
                 {errors.password && (
-                  <div className="text-xs text-red-600">{errors.password.message}</div>
+                  <div className="px-2 py-1 mt-1 text-xs font-medium text-white bg-red-500 rounded">
+                    {errors.password.message}
+                  </div>
                 )}
               </div>
 
@@ -150,7 +183,10 @@ const SignIn = () => {
                 </p>
                 <button
                   type="submit"
-                  className="relative px-6 py-2 text-white text-lg font-semibold bg-[#e67e22] rounded-lg shadow-lg hover:shadow-xl transition duration-300 w-[200px] h-[60px]"
+                  disabled={loading}
+                  className={`${
+                    !loading ? "bg-[#e67e22]" : "opacity-50 bg-[#e67e22]"
+                  } relative px-6 py-2 text-white text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition duration-300 w-[200px] h-[60px] flex items-center justify-center`}
                 >
                   {loading ? (
                     <div className="flex items-center justify-center gap-4 text-[17px]">
@@ -166,7 +202,7 @@ const SignIn = () => {
               <div className="flex justify-center w-full mt-5">
                 <Link to="/forgot-password">
                   <p className="font-bold text-white cursor-pointer hover:underline w-fit">
-                    Forget Password?
+                    Forgot Password?
                   </p>
                 </Link>
               </div>

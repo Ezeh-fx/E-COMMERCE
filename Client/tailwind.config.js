@@ -6,7 +6,7 @@ export default {
   ],
   theme: {
     screens: {
-      tablet: { max: "1007px" },
+      tablet: { max: "1251px" },
       mobile: { max: "640px" },
     },    
     extend: {},

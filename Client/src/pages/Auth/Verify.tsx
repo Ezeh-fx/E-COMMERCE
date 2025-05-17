@@ -12,6 +12,8 @@ const Verify = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [serverSuccess, setServerSuccess] = useState("");
 
 
   // Handle OTP input (4-digit only)
@@ -27,7 +29,7 @@ const Verify = () => {
     e.preventDefault();
 
     if (!otp) {
-      alert("Please enter your OTP before verifying.");
+       setServerError("Please enter your OTP before verifying.");
       return;
     }
 
@@ -43,12 +45,16 @@ const Verify = () => {
         console.log(response);
         setLoading(false);
         localStorage.removeItem("email");
-        alert("OTP Verified. You can now log in.");
+         setServerSuccess("OTP verified successfully! You can now log in.");
         navigate("/Login");
       })
       .catch((error) => {
-        setLoading(false);
-        alert(error.response?.data?.message || "OTP verification failed.");
+         setLoading(false);
+        if (error.response?.data?.message) {
+          setServerError(error.response.data.message);
+        } else {
+          setServerError("Invalid OTP. Please try again or request a new code.");
+        }
       });
   };
 
@@ -89,25 +95,46 @@ const Verify = () => {
         </p>
       </div>
 
+         {/* Error Message */}
+          {serverError && (
+            <div className="w-full p-3 mt-4 text-white transition-all duration-300 bg-red-500 rounded-lg shadow-md">
+              <p className="font-medium text-center">{serverError}</p>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {serverSuccess && (
+            <div className="w-full p-3 mt-4 text-white transition-all duration-300 bg-green-500 rounded-lg shadow-md">
+              <p className="font-medium text-center">{serverSuccess}</p>
+            </div>
+          )}
+
       <form
         onSubmit={handleVerify}
         className="mt-8 w-[100%] mobile:w-full mobile:p-5 flex flex-col gap-6 items-center"
       >
         {/* OTP Input */}
-        <input
-          type="text"
-          value={otp}
-          onChange={handleChange}
-          maxLength={4}
-         className="w-[70%] p-2 bg-white border rounded-md focus:outline-none h-[60px]"
-          placeholder="Enter 6-digit code"
-        />
+           <div className="flex flex-col items-center w-full">
+              <input
+                type="text"
+                value={otp}
+                onChange={handleChange}
+                maxLength={4}
+                className="w-[70%] p-2 text-center text-2xl tracking-widest bg-white border rounded-md focus:outline-none focus:ring-2 focus:ring-[#e67e22] h-[60px]"
+                placeholder="0000"
+              />
+              <p className="mt-2 text-sm text-gray-300">Enter 4-digit code</p>
+            </div>
 
         {/* Verify Button */}
         <button
           type="submit"
-           className="w-[550px] p-2 my-2 font-semibold text-white bg-[#e67e22] rounded-md outline-none h-[60px] cursor-pointer"
-          disabled={otp.length !== 4 || loading}
+         className={`w-[70%] p-2 font-semibold text-white ${
+                otp.length !== 4 || loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#e67e22] hover:bg-[#d35400]"
+              } rounded-md outline-none h-[60px] transition-colors duration-300`}
+              disabled={otp.length !== 4 || loading}
         >
           {loading ? <div className="flex items-center justify-center gap-4 text-[17px]">{Dotspinner()} Verifying...</div> : "Verify OTP"}
         </button>
