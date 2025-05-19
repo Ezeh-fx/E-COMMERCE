@@ -16,6 +16,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showProfileForm, setShowProfileForm] = useState(false);
+  const cartItems = useSelector((state: RootState) => state.cart.items.reduce((sum, item) => sum + item.quantity, 0));
   const handleProfileClick = () => {
     setShowProfileForm(true);
   };
@@ -33,7 +34,7 @@ const Header = () => {
     setMobileMenuOpen(false);
     dispatch(logOut());
     navigate("/login");
-  }; 
+  };
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -109,19 +110,22 @@ const Header = () => {
             <Link to="/cart">
               <div className="relative cursor-pointer">
                 <FiShoppingCart className="text-white text-2xl hover:text-[#e67e22] transition-colors" />
-                <span className="absolute -top-2 -right-2 bg-[#e67e22] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  0
-                </span>
-              </div>
+                {cartItems > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#e67e22] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItems}
+                  </span>
+                )}
+                </div>
             </Link>
+
             <div
               className="flex items-center gap-2 text-white transition duration-300 hover:cursor-pointer hover:underline"
               onClick={handleProfileClick}
             >
               <img
-                 src={user?.profileImages || "/default-avatar.png"}
+                src={user?.profileImages || "/default-avatar.png"}
                 alt="Profile"
-                className="w-9 h-9 rounded-full object-cover border-2 border-[#e67e22]"
+                className="w-9 h-9 rounded-full object-cover border-2 border-[#e67e22]" 
               />
               <span className="text-white text-[17px] font-semibold">
                 {user.firstname}
@@ -203,7 +207,7 @@ const Header = () => {
                   className="w-10 h-10 rounded-full object-cover border-2 border-[#e67e22]"
                 /> */}
                 <span className="text-white text-[22px] mobile:text-[20px] list-none cursor-pointer hover:text-[#e67e22]">
-                 Profile
+                  Profile
                 </span>
               </div>
 

@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { createReview, getOneProduct } from "../Api/ProductApi/ProductApi";
-import { useSelector } from "react-redux";
-import { RootState } from "../global/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../global/store";
+import { addToCart as add } from "../global/cartReducer";
+import { addToCart } from "../Api/CartApi/CartApi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ProductSidebarProps {
   productId: string | null;
@@ -50,6 +54,7 @@ const ProductSidebar = ({ productId, onClose }: ProductSidebarProps) => {
 
   const token = useSelector((state: RootState) => state.user.user?.token);
   // console.log(token);
+     const dispatch = useDispatch<AppDispatch>();
 
   const fetchProductDetails = useCallback(async (id: string) => {
     setLoading(true);
@@ -164,8 +169,37 @@ const ProductSidebar = ({ productId, onClose }: ProductSidebarProps) => {
     }
   };
 
+    // const user = useSelector((state: RootState) => state.user.user);
+
+    const handleAddToCart = async (productId: string) => {
+      if (!userData?.id) {
+        toast.error("You must be logged in to add to cart.");
+        return;
+      }
+      try {
+        const res = await addToCart(userData.id, productId, 1, token as string);
+        toast.success("Added to cart!");
+        const items = Array.isArray(res.cart) ? res.cart : [];
+        if (items.length > 0 && items[0].product) {
+          // Map product to expected shape
+          const { name, price } = items[0].product;
+          dispatch(
+            add({
+              ...items[0],
+              product: { name, price },
+            })
+          );
+        }
+        onClose(); // Close the sidebar after adding to cart
+      } catch (error) {
+        toast.error("Failed to add to cart. Please try again.");
+        console.error("Add to cart error:", error);
+      }
+    };
+
   return (
     <>
+       <ToastContainer position="top-right" autoClose={3000} />
       {/* Overlay */}
       {productId && (
         <div
@@ -274,6 +308,10 @@ const ProductSidebar = ({ productId, onClose }: ProductSidebarProps) => {
                           : "bg-gray-400 cursor-not-allowed"
                       }`}
                       disabled={product.stock <= 0}
+                     onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering sidebar open
+                          handleAddToCart(product._id);
+                        }}
                     >
                       Add to Cart
                     </button>

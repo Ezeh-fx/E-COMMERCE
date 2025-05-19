@@ -835,3 +835,64 @@ export const EmptyCart = asyncHandler(
     }
   }
 );
+
+export const getUserCart = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params;
+
+      if (!userId) {
+        return next(
+          new AppError({
+            message: "User ID is required",
+            httpCode: HttpCode.FIELD_REQUIRED,
+          })
+        );
+      }
+
+      const user = await User.findById(userId).populate({
+        path: 'cart.items.productId',
+        select: '_id name price productImage',
+      });
+
+      if (!user) {
+        return next(
+          new AppError({
+            message: "User not found",
+            httpCode: HttpCode.NOT_FOUND,
+          })
+        );
+      }
+
+      const formattedCart = user.cart?.items?.map((item: any) => {
+        const product = item.productId;
+        if (!product) return null;
+
+        return {
+          productId: product._id,
+          quantity: item.quantity,
+          product: {
+            _id: product._id,
+            name: product.name,
+            price: product.price,
+            productImage: product.productImage,
+          },
+        };
+      }).filter(Boolean); // Removes nulls
+
+      return res.status(HttpCode.OK).json({
+        message: "Cart retrieved successfully",
+        cart: formattedCart,
+      });
+    } catch (error) {
+      console.error(error);
+      return next(
+        new AppError({
+          message: "Error retrieving cart",
+          httpCode: HttpCode.INTERNAL_SERVER_ERROR,
+        })
+      );
+    }
+  }
+);
+

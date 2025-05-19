@@ -12,6 +12,7 @@ import {
   ForgetPassword,
   getAllUser,
   getOneUser,
+  getUserCart,
   LoginUser,
   removeFromCart,
   ResendOtp,
@@ -44,9 +45,10 @@ UserRoute.route("/getAll").get(authenticate_token, isAdmin, getAllUser);
 UserRoute.route("/getOne/:userId").get(authenticate_token, isAdmin, getOneUser);
 UserRoute.route("/delete/:userId").delete(authenticate_token, isAdmin, DeleteUser);
 UserRoute.patch("/update-to-admin/:userId", authenticate_token, updateToadmn);
-UserRoute.post("/add", addToCart);
-UserRoute.post("/remove", removeFromCart);
-UserRoute.post("/empty", EmptyCart);
+UserRoute.post("/add",authenticate_token, addToCart);
+UserRoute.post("/remove",authenticate_token, removeFromCart);
+UserRoute.post("/empty",authenticate_token, EmptyCart);
+UserRoute.get("/cart/:userId",authenticate_token, getUserCart);
 UserRoute.post("/forgot-password", ForgetPassword);
 UserRoute.post("/reset-password", UpdatePassword);
 

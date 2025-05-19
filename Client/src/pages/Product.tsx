@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-// import { GRID3 } from "../components/data/data";
 import { ThreeCircles } from "react-loader-spinner";
-// import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import {
@@ -10,6 +8,11 @@ import {
   findProductBySearch,
 } from "../Api/ProductApi/ProductApi";
 import ProductSidebar from "./Product_Detail";
+import { addToCart } from "../Api/CartApi/CartApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../global/store";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const categoryOptions = [
   "All",
@@ -28,7 +31,9 @@ const Product = () => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     null
   );
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
+  const user = useSelector((state: RootState) => state.user.user);
+  const token = useSelector((state: RootState) => state.user.user?.token);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 2000);
@@ -109,6 +114,20 @@ const Product = () => {
     document.body.style.overflow = "auto";
   };
 
+  const handleAddToCart = async (productId: string) => {
+    if (!user?.id) {
+      toast.error("You must be logged in to add to cart.");
+      return;
+    }
+    try {
+      await addToCart(user.id, productId, 1, token as string);
+      toast.success("Added to cart!");
+    } catch (error) {
+      toast.error("Failed to add to cart. Please try again.");
+      console.error("Add to cart error:", error);
+    }
+  };
+
   const filteredProducts = products.filter((product) => {
     const matchesCategory =
       selectedCategory === "All" || product.category === selectedCategory;
@@ -117,6 +136,7 @@ const Product = () => {
 
   return (
     <div className="w-full bg-[#0D0B1E] min-h-screen text-white">
+      <ToastContainer position="top-right" autoClose={3000} />
       {loading ? (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1c1a32]">
           <ThreeCircles
@@ -145,7 +165,6 @@ const Product = () => {
             />
           </div>
 
-         
           {error && (
             <div className="flex items-center justify-center mb-4">
               <p className="text-red-500">{error}</p>
@@ -168,16 +187,14 @@ const Product = () => {
             ))}
           </div>
 
-            {!isLoading && !error && products.length === 0 && (
-        <div className="p-8 text-center rounded-lg shadow">
-          <p className="mb-4 text-gray-500">No products available</p>
-          <button
-            className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-          >
-            Add Your First Product
-          </button>
-        </div>
-      )}
+          {!isLoading && !error && products.length === 0 && (
+            <div className="p-8 text-center rounded-lg shadow">
+              <p className="mb-4 text-gray-500">No products available</p>
+              <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
+                Add Your First Product
+              </button>
+            </div>
+          )}
 
           {/* Product Grid */}
           <div className="grid w-full grid-cols-4 gap-6 tablet:grid-cols-2 tablet:gap-4 mobile:grid-cols-1 mobile:gap-6  mobile:w-[90%] tablet:w-[90%]">
@@ -207,7 +224,13 @@ const Product = () => {
                     <p className="text-white text-[18px] tablet:text-[16px] mobile:text-[16px] font-bold">
                       {product.price}$
                     </p>
-                    <button className="bg-[#E56623B2] text-white px-4 py-2 mobile:px-3 mobile:py-1.5 rounded-[10px] hover:bg-[#e67e22] transition-colors duration-300 text-sm mobile:text-sm whitespace-nowrap">
+                    <button
+                      className="bg-[#E56623B2] text-white px-4 py-2 rounded-[10px] hover:bg-[#e67e22]"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering sidebar open
+                        handleAddToCart(product._id);
+                      }}
+                    >
                       Add to cart
                     </button>
                   </div>

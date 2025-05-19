@@ -2,6 +2,7 @@ import { Document, model, Schema } from "mongoose";
 import { Iuser } from "../Interface/userInterface";
 import isEmail from "validator/lib/isEmail";
 import { authRole } from "../constant/userRole";
+import { Types } from "mongoose";
 
 interface AllUsers extends Iuser, Document {
   clearCart(): Promise<void>;
@@ -93,41 +94,42 @@ const UserSchema = new Schema<AllUsers>(
 UserSchema.methods.addToCart = function (
   productId: string,
   quantity: number = 1
-) {
-  // Check if the product already exists in the cart
+): Promise<void> {
   const cartProductIndex = this.cart.items.findIndex(
     (item: { productId: { toString: () => string } }) =>
       item.productId.toString() === productId.toString()
   );
 
   if (cartProductIndex >= 0) {
-    // If product exists, increase the quantity
     this.cart.items[cartProductIndex].quantity += quantity;
   } else {
-    // If product does not exist, add a new entry
     this.cart.items.push({
       productId,
-      quantity: quantity ? Number(quantity) : 1,
+      quantity,
     });
   }
 
-  // Save the updated cart
   return this.save({ validateBeforeSave: false });
 };
 
-UserSchema.methods.RemoveCart = function (productId: string) {
-  const updateCart = this.cart.items.filter(
-    (items: { productId: { toString: () => string } }) => {
-      return items.productId.toString() !== productId.toString();
-    }
+// Remove a single product from the cart
+UserSchema.methods.RemoveCart = function (productId: string): Promise<typeof this> {
+  if (!this.cart?.items) {
+    return Promise.resolve(this);
+  }
+
+  this.cart.items = this.cart.items.filter(
+    (item: { productId: Types.ObjectId }) =>
+      item.productId.toString() !== productId.toString()
   );
-  this.cart.items = updateCart;
+
   return this.save({ validateBeforeSave: false });
 };
 
-UserSchema.methods.clearCart = function () {
-  this.cart = { items: [] };
-  return this.save();
+// Clear all items from the cart
+UserSchema.methods.clearCart = function (): Promise<typeof this> {
+  this.cart.items = [];
+  return this.save({ validateBeforeSave: false });
 };
 
 export const User = model<AllUsers>("User", UserSchema);

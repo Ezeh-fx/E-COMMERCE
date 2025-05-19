@@ -11,9 +11,16 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { getAllProducts, ProductPayload } from "../Api/ProductApi/ProductApi";
 import ProductSidebar from "./Product_Detail";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { addToCart } from "../Api/CartApi/CartApi";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../global/store";
+import { addToCart as add } from "../global/cartReducer";
 
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
+   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 2000);
@@ -29,6 +36,8 @@ const HomePage = () => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     null
   );
+  const user = useSelector((state: RootState) => state.user.user);
+  const token = useSelector((state: RootState) => state.user.user?.token);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -53,6 +62,31 @@ const HomePage = () => {
     fetchProducts();
   }, []);
 
+  const handleAddToCart = async (productId: string) => {
+    if (!user?.id) {
+      toast.error("You must be logged in to add to cart.");
+      return;
+    }
+    try {
+      const res = await addToCart(user.id, productId, 1, token as string);
+      toast.success("Added to cart!");
+      const items = Array.isArray(res.cart) ? res.cart : [];
+      if (items.length > 0 && items[0].product) {
+        // Map product to expected shape
+        const { name, price } = items[0].product;
+        dispatch(
+          add({
+            ...items[0],
+            product: { name, price },
+          })
+        );
+      }
+    } catch (error) {
+      toast.error("Failed to add to cart. Please try again.");
+      console.error("Add to cart error:", error);
+    }
+  };
+
   const handleProductClick = (productId: string) => {
     setSelectedProductId(productId);
     // Add a class to the body to prevent scrolling when sidebar is open
@@ -68,6 +102,7 @@ const HomePage = () => {
 
   return (
     <div className="w-full bg-[#0D0B1E]">
+      <ToastContainer position="top-right" autoClose={3000} />
       {loading ? (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1c1a32]">
           <ThreeCircles
@@ -155,7 +190,13 @@ const HomePage = () => {
                       <p className="text-white text-[18px] tablet:text-[16px] mobile:text-[16px] font-bold">
                         {product.price}$
                       </p>
-                      <button className="bg-[#E56623B2] text-white px-4 py-2 mobile:px-3 mobile:py-1.5 rounded-[10px] hover:bg-[#e67e22] transition-colors duration-300 text-sm mobile:text-sm whitespace-nowrap">
+                      <button
+                        className="bg-[#E56623B2] text-white px-4 py-2 rounded-[10px] hover:bg-[#e67e22]"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering sidebar open
+                          handleAddToCart(product._id);
+                        }}
+                      >
                         Add to cart
                       </button>
                     </div>
@@ -199,7 +240,13 @@ const HomePage = () => {
                       <p className="text-white text-[18px] tablet:text-[16px] mobile:text-[16px] font-bold">
                         {product.price}$
                       </p>
-                      <button className="bg-[#E56623B2] text-white px-4 py-2 mobile:px-3 mobile:py-1.5 rounded-[10px] hover:bg-[#e67e22] transition-colors duration-300 text-sm mobile:text-sm whitespace-nowrap">
+                      <button
+                        className="bg-[#E56623B2] text-white px-4 py-2 rounded-[10px] hover:bg-[#e67e22]"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering sidebar open
+                          handleAddToCart(product._id);
+                        }}
+                      >
                         Add to cart
                       </button>
                     </div>

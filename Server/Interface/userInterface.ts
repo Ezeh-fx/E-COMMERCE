@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Document, Schema } from "mongoose";
 
 export interface Iuser extends Document {
@@ -11,12 +12,12 @@ export interface Iuser extends Document {
   OtpCode: number;
   verify: boolean;
   profileImages: string;
-  cart?: {
+   cart: {
     items: {
-      productsId: Schema.Types.ObjectId;
+      productId: Types.ObjectId | string;
       quantity: number;
-    };
-  }[];
+    }[];
+  };
   orders: Schema.Types.ObjectId;
   role: string;
   OTPExpiry: string;
