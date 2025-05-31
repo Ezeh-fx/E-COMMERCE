@@ -9,67 +9,32 @@ const orderSchema = new Schema<Ioder>({
     ref: "User",
     required: true,
   },
-  status: {
+  address: Object,
+  items: [
+    {
+      name: String,
+      quantity: Number,
+      price: Number,
+    },
+  ],
+  name: {
     type: String,
     required: true,
-    default: "pending",
-    enum: ["pending", "paid", "shipped"],
   },
-  paymentMethod: {
+  email: {
     type: String,
     required: true,
-    default: "Stripe",
-    enum: ["Paypal", "Stripe"],
   },
+  total: Number,
   createdAt: {
     type: Date,
     default: Date.now,
   },
-  totalAmount: {
-    type: Number,
-    required: true,
-  },
-  orderItem: [
-    {
-      productId: {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-      },
-    },
-  ],
-  city: {
+  status: {
     type: String,
-    required: true,
+    enum: ["pending", "paid", "failed"],
+    default: "pending",
   },
-  address: {
-    type: String,
-    required: true,
-  },
-  country: {
-    type: String,
-    required: true,
-  },
-  longitude: {
-    type: String,
-    required: true,
-  },
-  latitude: {
-    type: String,
-    required: true,
-  },
-  zipCode : {
-    type: String,
-    required: true,
-  },
-  TimeZone : {
-    type: String,
-    required: true,
-  }
 });
 
 export const Order = model<Allorder>("Order", orderSchema);

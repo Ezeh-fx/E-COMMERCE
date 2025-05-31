@@ -1,9 +1,6 @@
+import axios from "axios";
 
-
-import axios from 'axios';
-
-const BASE_URL = "http://localhost:2343/api/"
-
+const BASE_URL = "http://localhost:2343/api/";
 
 export interface CartItem {
   productId: string;
@@ -22,15 +19,13 @@ export interface CartResponse {
   cart: CartItem[];
 }
 
-
 export const addToCart = async (
   userId: string,
   productId: string,
   quantity: number = 1,
-  token : string
+  token: string
 ): Promise<CartResponse> => {
   try {
-    
     const response = await axios.post(
       `${BASE_URL}/add`,
       {
@@ -44,10 +39,10 @@ export const addToCart = async (
         },
       }
     );
-    
+
     return response.data;
   } catch (error) {
-    console.error('Error adding item to cart:', error);
+    console.error("Error adding item to cart:", error);
     throw error;
   }
 };
@@ -55,11 +50,9 @@ export const addToCart = async (
 export const removeFromCart = async (
   userId: string,
   productId: string,
-    token: string
+  token: string
 ): Promise<CartResponse> => {
   try {
-   
-    
     const response = await axios.post(
       `${BASE_URL}/remove`,
       {
@@ -72,18 +65,19 @@ export const removeFromCart = async (
         },
       }
     );
-    
+
     return response.data;
   } catch (error) {
-    console.error('Error removing item from cart:', error);
+    console.error("Error removing item from cart:", error);
     throw error;
   }
 };
 
-export const emptyCart = async (userId: string , token : string): Promise<CartResponse> => {
+export const emptyCart = async (
+  userId: string,
+  token: string
+): Promise<CartResponse> => {
   try {
-    
-    
     const response = await axios.post(
       `${BASE_URL}/empty`,
       {
@@ -95,32 +89,46 @@ export const emptyCart = async (userId: string , token : string): Promise<CartRe
         },
       }
     );
-    
+
     return response.data;
   } catch (error) {
-    console.error('Error emptying cart:', error);
+    console.error("Error emptying cart:", error);
     throw error;
   }
 };
-
 
 export const getUserCart = async (
   userId: string,
   token: string
 ): Promise<CartResponse> => {
   try {
-    const response = await axios.get(
-      `${BASE_URL}/cart/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    
+    const response = await axios.get(`${BASE_URL}/cart/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return response.data;
   } catch (error) {
-    console.error('Error fetching cart:', error);
+    console.error("Error fetching cart:", error);
     throw error;
   }
+};
+
+export const createCheckoutSession = async (userId: string, token: string) => {
+  const res = await axios.post(
+    `${BASE_URL}order/create-checkout-session`,
+    { userId },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return res.data;
+};
+
+export const getAllOrders = async (userId: string, token: string) => {
+  const res = await axios.get(`${BASE_URL}/orders/orders/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
 };

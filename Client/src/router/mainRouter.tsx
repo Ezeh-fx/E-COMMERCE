@@ -17,6 +17,8 @@ import Cart from "../pages/Cart";
 import Order from "../pages/Order";
 import AddProductModal from "../pages/DashBoard/Product";
 import User from "../pages/DashBoard/User";
+import Success from "../pages/Payment/Success";
+import Cancel from "../pages/Payment/Cancel";
 
 const mainRoute = createBrowserRouter([
   {
@@ -29,20 +31,20 @@ const mainRoute = createBrowserRouter([
       },
       {
         path: "/product",
-        element: <Product />
+        element: <Product />,
       },
       {
         path: "/contact",
-        element: <Contact />
+        element: <Contact />,
       },
       {
         path: "/cart",
-        element : <Cart />
-      }, 
+        element: <Cart />,
+      },
       {
         path: "/order",
         element: <Order />,
-      }
+      },
     ],
   },
   {
@@ -67,7 +69,7 @@ const mainRoute = createBrowserRouter([
       },
       {
         path: "/admin/products",
-        element: <AddProductModal  />,
+        element: <AddProductModal />,
       },
     ],
   },
@@ -94,6 +96,14 @@ const mainRoute = createBrowserRouter([
   {
     path: "/reset-password",
     element: <ResetPassword />,
+  },
+  {
+    path: "/success",
+    element: <Success />,
+  },
+  {
+    path: "/cancel",
+    element: <Cancel />,
   },
 ]);
 

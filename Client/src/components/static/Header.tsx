@@ -16,7 +16,9 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showProfileForm, setShowProfileForm] = useState(false);
-  const cartItems = useSelector((state: RootState) => state.cart.items.reduce((sum, item) => sum + item.quantity, 0));
+  const cartItems = useSelector((state: RootState) =>
+    state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
+  );
   const handleProfileClick = () => {
     setShowProfileForm(true);
   };
@@ -101,6 +103,11 @@ const Header = () => {
         >
           Contact
         </li>
+        <Link to={"/order"}>
+          <li className="text-white text-[17px] list-none cursor-pointer hover:text-[#e67e22]">
+            Orders
+          </li>
+        </Link>
       </ul>
 
       {/* Login/Register or User Profile - Hidden on mobile and tablet */}
@@ -115,7 +122,7 @@ const Header = () => {
                     {cartItems}
                   </span>
                 )}
-                </div>
+              </div>
             </Link>
 
             <div
@@ -125,7 +132,7 @@ const Header = () => {
               <img
                 src={user?.profileImages || "/default-avatar.png"}
                 alt="Profile"
-                className="w-9 h-9 rounded-full object-cover border-2 border-[#e67e22]" 
+                className="w-9 h-9 rounded-full object-cover border-2 border-[#e67e22]"
               />
               <span className="text-white text-[17px] font-semibold">
                 {user.firstname}

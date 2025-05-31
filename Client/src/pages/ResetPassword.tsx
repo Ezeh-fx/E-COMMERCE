@@ -132,7 +132,7 @@ const ResetPassword = () => {
 
       if (response.data.message === "Password Changed") {
         console.log("✅ Password successfully changed!");
-        navigate("/Login")
+        navigate("/Login");
       } else {
         console.log("❌ Error occurred while changing password.");
       }
@@ -142,9 +142,9 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] items-center justify-center">
-       {/* Image */}
-       <div className="relative w-1/2 bg-white mobile:hidden tablet:hidden">
+    <div className="w-full h-screen flex bg-gradient-to-r from-[#24243e] via-[#302b63] to-[#0f0c29] items-center justify-center">
+      {/* Image */}
+      <div className="relative w-[50%] bg-white mobile:hidden tablet:hidden">
         {/* Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-5"></div>
 
@@ -156,9 +156,11 @@ const ResetPassword = () => {
       </div>
 
       {/* Form Section */}
-      <div className="flex flex-col items-center justify-center w-full h-full px-4 py-6 lg:w-1/2">
+      <div className="flex flex-col items-center justify-center w-[50%] h-full px-4 py-6 lg:w-1/2">
         <div className="flex flex-col items-center justify-center w-full gap-4">
-          <h1 className="mb-10 text-3xl font-bold text-white">{step === "otp" ? "Verify OTP" : "Reset Password"}</h1>
+          <h1 className="mb-10 text-3xl font-bold text-white">
+            {step === "otp" ? "Verify OTP" : "Reset Password"}
+          </h1>
 
           {step === "otp" ? (
             <div className="flex flex-col items-center w-full gap-4">
@@ -180,7 +182,10 @@ const ResetPassword = () => {
             <>
               {/* Password Field */}
               <div className="w-full mb-6 sm:w-4/5 lg:w-1/2">
-                <label htmlFor="password" className="block mb-1 font-bold text-white">
+                <label
+                  htmlFor="password"
+                  className="block mb-1 font-bold text-white"
+                >
                   Password
                 </label>
 
@@ -213,20 +218,27 @@ const ResetPassword = () => {
                         className={`h-full transition-all duration-500 ${passwordStrength.width}`}
                       ></div>
                     </div>
-                    <p className={`mt-1 text-sm font-semibold ${passwordStrength.color}`}>
+                    <p
+                      className={`mt-1 text-sm font-semibold ${passwordStrength.color}`}
+                    >
                       {passwordStrength.text}
                     </p>
                   </>
                 )}
 
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
 
               {/* Confirm Password Field */}
               <div className="w-full mb-6 sm:w-4/5 lg:w-1/2">
-                <label htmlFor="confirmPassword" className="block mb-1 font-bold text-white">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block mb-1 font-bold text-white"
+                >
                   Confirm Password
                 </label>
 

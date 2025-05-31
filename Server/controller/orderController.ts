@@ -1,138 +1,144 @@
-import { Request, Response, NextFunction } from "express";
-import { AppError, HttpCode } from "../error/errorDefine";
-import { Ioder } from "../Interface/orderInterface";
-import { Order } from "../model/orderModel";
-import { asyncHandler } from "../error/Async/asyncHandler";
+import { NextFunction, Request, Response } from "express";
 import Stripe from "stripe";
-import { envVaraibles } from "../env/environmentVar";
+import { Order } from "../model/orderModel";
 import { Product } from "../model/productModel";
-import { getAddressDetails, getCordinate } from "../Utils/Tracker";
-import axios from "axios";
+import webpush, { adminSubscription } from "../Utils/webPush";
+import { envVaraibles } from "../env/environmentVar";
 import { User } from "../model/userModel";
-import { Types } from "mongoose";
-import webPush from "web-push";
+import { AppError, HttpCode } from "../error/errorDefine";
 
-const publicVapidKey = envVaraibles.PublicKey;
-const privateVapidKey = envVaraibles.PrivateKey;
+const stripe = new Stripe(envVaraibles.STRIPE_SECRET_KEY, {
+  apiVersion: "2025-02-24.acacia",
+});
 
-webPush.setVapidDetails(
-  "mailto:your-email@example.com",
-  publicVapidKey,
-  privateVapidKey
-);
+export const createCheckoutSession = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req.body;
 
-let adminSubscriptions: any[] = [];
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(
+        new AppError({
+          message: "User not found",
+          httpCode: HttpCode.NOT_FOUND,
+        })
+      );
+    }
 
-export const saveSubscription = async (req: Request, res: Response) => {
-  const subscription = req.body;
-  adminSubscriptions.push(subscription);
-  return res.status(HttpCode.OK).json({ message: "Subscription saved" });
-};
+    const cartItems = user.cart;
+    if (!cartItems || !cartItems.items || cartItems.items.length === 0) {
+      return next(
+        new AppError({
+          message: "Cart is empty",
+          httpCode: HttpCode.BAD_REQUEST,
+        })
+      );
+    }
 
-export const createOrderBeforePayment = asyncHandler(
-  async (req: Request<any, {}, Ioder>, res: Response, next: NextFunction) => {
-    try {
-      const { userId } = req.params;
-      let totalAmount = 0;
-      const { paymentMethod, orderItem, address, status } = req.body;
-
-      if (!req.body || !Array.isArray(orderItem)) {
-        return next(
-          new AppError({
-            message: "All fields are required",
-            httpCode: HttpCode.FIELD_REQUIRED,
-          })
-        );
-      }
-
-      const existingUser = await User.findById(userId);
-      if (!existingUser) {
-        return next(
-          new AppError({
-            message: "User not found",
-            httpCode: HttpCode.NOT_FOUND,
-          })
-        );
-      }
-
-      for (const item of orderItem) {
+    // 🔁 Fetch product details for each cart item
+    const lineItems = await Promise.all(
+      cartItems.items.map(async (item: any) => {
         const product = await Product.findById(item.productId);
         if (!product) {
-          return res.status(404).json({
-            success: false,
-            message: `Product not found: ${item.productId}`,
-          });
+          throw new Error(`Product not found: ${item.productId}`);
         }
-        totalAmount += Number(product.price) * Number(item.quantity);
-      }
 
-      const latAndLong = await getCordinate(address);
-      const addressDetails = await getAddressDetails(address);
+        return {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: product.name,
+              // Optional: add description or images here
+            },
+            unit_amount: Math.round(product.price * 100),
+          },
+          quantity: item.quantity,
+        };
+      })
+    );
 
-      if (!latAndLong || !latAndLong.latitude || !latAndLong.longitude) {
-        return next(
-          new AppError({
-            message: "Invalid address",
-            httpCode: HttpCode.NOT_ACCEPTABLE,
-          })
-        );
-      }
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      shipping_address_collection: {
+        allowed_countries: ["US", "IN", "CA", "NG"],
+      },
+      phone_number_collection: { enabled: true },
+      line_items: lineItems,
+      mode: "payment",
+      customer_email: user.email,
+      metadata: {
+        userId,
+      },
+      success_url:
+        "http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}",
+      cancel_url: "http://localhost:5173/cancel",
+    });
 
-      const response = await axios.get(
-        `https://timeapi.io/api/time/current/coordinate?latitude=${latAndLong.latitude}&longitude=${latAndLong.longitude}`,
-        { headers: { Accept: "application/json" } }
-      );
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error("Stripe session error:", err);
+    res
+      .status(HttpCode.INTERNAL_SERVER_ERROR)
+      .json({ error: "Checkout session creation failed" });
+  }
+};
 
-      if (!response.data) {
-        return next(
-          new AppError({
-            message: "Invalid address",
-            httpCode: HttpCode.BAD_REQUEST,
-          })
-        );
-      }
+export const handleStripeWebhook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const sig = req.headers["stripe-signature"]!;
+  let event;
 
-      const timeZone = response.data.timeZone;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET as string
+    );
+  } catch (err) {
+    console.error("Webhook Error:", err);
+    return res.status(HttpCode.BAD_REQUEST).send(`Webhook Error: ${err}`);
+  }
 
-      const newOrder = await Order.create({
-        user: new Types.ObjectId(userId),
-        paymentMethod,
-        orderItem,
-        address,
-        status,
-        totalAmount,
-        city: addressDetails.city,
-        country: addressDetails.country,
-        longitude: latAndLong.longitude,
-        latitude: latAndLong.latitude,
-        zipCode: addressDetails.postalCode
-          ? parseInt(addressDetails.postalCode, 10)
-          : null,
-        timeZone,
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+
+    try {
+      const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+        expand: ["line_items", "customer_details"],
       });
 
-      const admins = await User.find({ role: "admin" });
+      const userId = session.metadata?.userId;
+      const user = await User.findById(userId);
+      if (!user) return res.status(HttpCode.NOT_FOUND).send("User not found");
 
-      const notificationPayload = JSON.stringify({
-        title: "New Order Received",
-        body: `User ${newOrder.user} placed an order`,
+      const order = new Order({
+        user: userId,
+        email: user.email,
+        name: user.firstname,
+        address: fullSession.customer_details?.address,
+        items: user.cart,
+        total: fullSession.amount_total! / 100,
+        status: "paid",
       });
 
-      adminSubscriptions.forEach((subscription) => {
-        webPush
-          .sendNotification(subscription, notificationPayload)
-          .catch((err) => console.error(err));
+      await order.save();
+
+      const payload = JSON.stringify({
+        title: "🛒 New Order",
+        body: `User ${user.name} placed an order for $${order.total}`,
       });
 
-      return res.status(HttpCode.CREATE).json({
-        message: "Order created successfully",
-        data: {
-          total: newOrder.totalAmount,
-          items: newOrder.orderItem,
-        },
-      });
-    } catch (error) {
-      console.log(error);
+      await webpush.sendNotification(adminSubscription, payload);
+      console.log("📣 Admin notified");
+    } catch (err) {
+      console.error("Order creation error:", err);
       return next(
         new AppError({
           message: "Failed to create order",
@@ -141,217 +147,45 @@ export const createOrderBeforePayment = asyncHandler(
       );
     }
   }
-);
 
-const stripe = new Stripe(envVaraibles.STRIPE_SECRET_KEY);
+  res.status(HttpCode.OK).send("Webhook received");
+};
 
-export const PayForOrder = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { orderId } = req.params;
-      const { token } = req.body;
+export const getAllOrders = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.params;
 
-      const order = await Order.findById(orderId);
-
-      if (!order) {
-        return next(
-          new AppError({
-            message: "Order not found",
-            httpCode: HttpCode.NOT_FOUND,
-          })
-        );
-      }
-
-      const charge = await stripe.charges.create({
-        amount: order.totalAmount * 100,
-        currency: "usd",
-        source: token,
-        description: `Order payment for ${orderId}`,
-      });
-
-      order.status = "paid";
-      await order.save();
-
-      return res.status(HttpCode.OK).json({
-        message: "Payment successful",
-        data: order,
-      });
-    } catch (error) {
-      console.log(error);
-      return next(
-        new AppError({
-          message: "Failed to create order",
-          httpCode: HttpCode.INTERNAL_SERVER_ERROR,
-        })
-      );
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
+
+    // Find all orders for the logged-in user, populate user name and email
+    const orders = await Order.find({ user: userId }).populate(
+      "user",
+      "name email"
+    );
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Failed to fetch orders" });
   }
-);
+};
 
-export const getOrders = asyncHandler(
-  async (
-    req: Request<{}, {}, Ioder>,
-    res: Response,
-    next: NextFunction
-  ): Promise<any> => {
-    try {
-      const orders = await Order.find().populate("user", "name email");
+export const getOneOrder = async (req: Request, res: Response) => {
+  try {
+    const order = await Order.findById(req.params.id).populate(
+      "user",
+      "name email"
+    );
+    if (!order) return res.status(404).json({ message: "Order not found" });
 
-      if (!orders) {
-        return next(
-          new AppError({
-            message: "Order not found",
-            httpCode: HttpCode.NOT_FOUND,
-          })
-        );
-      }
-
-      return res.status(HttpCode.OK).json({
-        message: "Orders fetched successfully",
-        data: orders,
-      });
-    } catch (error) {
-      console.log(error);
-      return next(
-        new AppError({
-          message: "An error occurred while fetching orders",
-          httpCode: HttpCode.INTERNAL_SERVER_ERROR,
-        })
-      );
-    }
+    res.status(200).json(order);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch order" });
   }
-);
-
-export const getOrder = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-    try {
-      const order = await Order.findById(req.params.id).populate(
-        "user",
-        "name email"
-      );
-      if (!order) {
-        return res.status(HttpCode.NOT_FOUND).json({
-          message: "Order not found",
-        });
-      }
-      return res.status(HttpCode.OK).json({
-        message: "Order fetched successfully",
-        data: order,
-      });
-    } catch (error) {
-      console.log(error);
-      return next(
-        new AppError({
-          message: "An error occurred while fetching order",
-          httpCode: HttpCode.INTERNAL_SERVER_ERROR,
-        })
-      );
-    }
-  }
-);
-9;
-
-export const updateOrderToDelivered = asyncHandler(
-  async (
-    req: Request<any, {}, Ioder>,
-    res: Response,
-    next: NextFunction
-  ): Promise<any> => {
-    try {
-      const order = await Order.findById(req.params.id);
-
-      if (!order) {
-        return res.status(HttpCode.NOT_FOUND).json({
-          message: "Order not found",
-        });
-      }
-
-      order.status = "delivered";
-      await order.save();
-
-      return res.status(HttpCode.OK).json({
-        message: "Order updated successfully",
-        data: order,
-      });
-    } catch (error) {
-      console.log(error);
-      return next(
-        new AppError({
-          message: "An error occurred while updating order",
-          httpCode: HttpCode.INTERNAL_SERVER_ERROR,
-        })
-      );
-    }
-  }
-);
-
-export const getMyOrders = asyncHandler(
-  async (
-    req: Request<any, {}, Ioder>,
-    res: Response,
-    next: NextFunction
-  ): Promise<any> => {
-    try {
-      const { user } = req.params;
-
-      const orders = await Order.find({ user: user });
-
-      if (orders.length === 0) {
-        // Check if array is empty
-        return res.status(HttpCode.NOT_FOUND).json({
-          message: "No order found for this user",
-          data: [],
-        });
-      }
-      return res.status(HttpCode.OK).json({
-        message: "Orders fetched successfully",
-        data: orders,
-      });
-    } catch (error) {
-      console.log(error);
-      return next(
-        new AppError({
-          message: "An error occurred while fetching orders",
-          httpCode: HttpCode.INTERNAL_SERVER_ERROR,
-        })
-      );
-    }
-  }
-);
-
-export const DeleteOrder = asyncHandler(
-  async (
-    req: Request, 
-    res: Response, 
-    next: NextFunction
-  ): Promise<any> => {
-    try {
-      const { orderId } = req.params;
-
-      const order = await Order.findByIdAndDelete(orderId);
-
-      if (!order) {
-        return next(
-          new AppError({
-            message: "Order not found",
-            httpCode: HttpCode.NOT_FOUND,
-          })
-        );
-      }
-
-      order.status = "cancelled";
-      await order.save();
-      return res.status(HttpCode.OK).json({
-        message: "Order updated successfully",
-      });
-    } catch (error) {
-      console.log(error);
-      return next(
-        new AppError({
-          message: "An error occurred while deleting orders",
-          httpCode: HttpCode.INTERNAL_SERVER_ERROR,
-        })
-      );
-    }
-  }
-);
+};

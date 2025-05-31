@@ -418,7 +418,7 @@ const ProductSidebar = ({ productId, onClose }: ProductSidebarProps) => {
                               name="comment"
                               value={reviewFormData.comment}
                               onChange={handleReviewChange}
-                              className="w-full p-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full p-2 text-black bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               rows={4}
                               required
                               placeholder="Share your experience with this product..."

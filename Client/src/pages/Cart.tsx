@@ -5,19 +5,25 @@ import {
   getUserCart,
   removeFromCart,
   emptyCart as emptyCartApi,
+  createCheckoutSession,
 } from "../Api/CartApi/CartApi";
-import { setCart, removeFromCart as removeFromCartState, emptyCart } from "../global/cartReducer"; // Adjust path if needed
+import {
+  setCart,
+  removeFromCart as removeFromCartState,
+  emptyCart,
+} from "../global/cartReducer"; // Adjust path if needed
 import { ThreeCircles } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { MdDelete } from "react-icons/md";
 import "react-toastify/dist/ReactToastify.css";
+import { TailSpin } from "react-loader-spinner";
 
 const Cart = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const user = useSelector((state: RootState) => state.user.user);
   const token = user?.token;
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -30,7 +36,12 @@ const Cart = () => {
         const res = await getUserCart(user.id, token);
         const items = Array.isArray(res.cart)
           ? res.cart
-              .filter((item) => item.product && typeof item.product.name === "string" && typeof item.product.price === "number")
+              .filter(
+                (item) =>
+                  item.product &&
+                  typeof item.product.name === "string" &&
+                  typeof item.product.price === "number"
+              )
               .map((item) => ({
                 ...item,
                 product: {
@@ -51,39 +62,57 @@ const Cart = () => {
     fetchCart();
   }, [user, token, dispatch]);
 
-const handleRemove = async (productId: string) => {
-  if (!user || !token) return;
+  const handleRemove = async (productId: string) => {
+    if (!user || !token) return;
 
-  try {
-    await removeFromCart(user.id, productId, token); // Call backend API
-    dispatch(removeFromCartState(productId));        // Update Redux state
-    toast.success("Item removed from cart");
-  } catch (err) {
-    console.error("Failed to remove item:", err);
-    toast.error("Failed to remove item");
-  }
-};
+    try {
+      await removeFromCart(user.id, productId, token); // Call backend API
+      dispatch(removeFromCartState(productId)); // Update Redux state
+      toast.success("Item removed from cart");
+    } catch (err) {
+      console.error("Failed to remove item:", err);
+      toast.error("Failed to remove item");
+    }
+  };
 
+  const handleEmptyCart = async () => {
+    if (!user || !token) return;
 
-const handleEmptyCart = async () => {
-  if (!user || !token) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to empty your cart?"
+    );
+    if (!confirmed) {
+      toast.info("Cart clearing cancelled");
+      return;
+    }
 
-  const confirmed = window.confirm("Are you sure you want to empty your cart?");
-  if (!confirmed) {
-    toast.info("Cart clearing cancelled");
-    return;
-  }
+    try {
+      await emptyCartApi(user.id, token); // API call to backend
+      dispatch(emptyCart()); // Clear Redux state
+      toast.success("Cart has been emptied");
+    } catch (err) {
+      console.error("Failed to empty cart:", err);
+      toast.error("Failed to empty the cart");
+    }
+  };
 
-  try {
-    await emptyCartApi(user.id, token);       // API call to backend
-    dispatch(emptyCart());               // Clear Redux state
-    toast.success("Cart has been emptied");
-  } catch (err) {
-    console.error("Failed to empty cart:", err);
-    toast.error("Failed to empty the cart");
-  }
-};
+  const handleCheckout = async () => {
+    if (!user || !token) {
+      toast.error("You must be logged in to checkout.");
+      return;
+    }
+    setCheckoutLoading(true);
 
+    try {
+      const { url } = await createCheckoutSession(user.id, token);
+      window.location.href = url; // Redirect to Stripe checkout
+      setCheckoutLoading(false);
+    } catch (err) {
+      setCheckoutLoading(false);
+      console.error("Checkout error:", err);
+      toast.error("Failed to start checkout session.");
+    }
+  };
 
   return (
     <div>
@@ -117,23 +146,37 @@ const handleEmptyCart = async () => {
                     <tr className="bg-[#29274c] text-left">
                       <th className="p-3 border-b border-[#29274c]">Product</th>
                       <th className="p-3 border-b border-[#29274c]">Price</th>
-                      <th className="p-3 border-b border-[#29274c]">Quantity</th>
-                      <th className="p-3 border-b border-[#29274c]">Subtotal</th>
-                      <th className="p-3 border-b border-[#29274c] text-center">Action</th>
+                      <th className="p-3 border-b border-[#29274c]">
+                        Quantity
+                      </th>
+                      <th className="p-3 border-b border-[#29274c]">
+                        Subtotal
+                      </th>
+                      <th className="p-3 border-b border-[#29274c] text-center">
+                        Action
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {cartItems.map((item) => (
-                      <tr key={item.productId} className="hover:bg-[#2b294f] transition">
+                      <tr
+                        key={item.productId}
+                        className="hover:bg-[#2b294f] transition"
+                      >
                         <td className="p-3 border-b border-[#29274c]">
                           {item.product?.name || "Unnamed Product"}
                         </td>
                         <td className="p-3 border-b border-[#29274c]">
                           ${item.product?.price.toLocaleString()}
                         </td>
-                        <td className="p-3 border-b border-[#29274c]">{item.quantity}</td>
                         <td className="p-3 border-b border-[#29274c]">
-                          ${((item.product?.price ?? 0) * item.quantity).toLocaleString()}
+                          {item.quantity}
+                        </td>
+                        <td className="p-3 border-b border-[#29274c]">
+                          $
+                          {(
+                            (item.product?.price ?? 0) * item.quantity
+                          ).toLocaleString()}
                         </td>
                         <td className="p-3 border-b border-[#29274c] text-center">
                           <button
@@ -160,12 +203,24 @@ const handleEmptyCart = async () => {
                   >
                     Empty Cart
                   </button>
-                  <a
-                    href="/order"
-                    className="bg-[#f39c12] text-black font-bold text-center py-3 px-6 rounded-lg hover:bg-[#e67e22] transition"
+                  <button
+                    onClick={handleCheckout}
+                    disabled={checkoutLoading}
+                    className={`flex items-center justify-center gap-2 px-6 py-3 font-bold rounded-lg transition ${
+                      checkoutLoading
+                        ? "bg-[#c87f0a] cursor-not-allowed"
+                        : "bg-[#f39c12] hover:bg-[#e67e22] text-black"
+                    }`}
                   >
-                    Proceed to Checkout
-                  </a>
+                    {checkoutLoading ? (
+                      <>
+                        <TailSpin height={20} width={20} color="#fff" />
+                        Redirecting...
+                      </>
+                    ) : (
+                      "Proceed to Checkout"
+                    )}
+                  </button>
                 </div>
               </>
             )}
